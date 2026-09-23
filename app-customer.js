@@ -366,8 +366,9 @@ function submitCheckout() {
       foodTotal: data.foodTotal,
       deliveryFee: data.deliveryFee,
       grandTotal: grand
-    }).catch(function (err) {
-      console.warn('[Munch] Order log failed (WhatsApp still opened):', err);
+  }).catch(function (err) {
+      console.warn('[Munch] Order log failed:', err);
+      toast('Order log failed: ' + (err.message || 'unknown'));
     });
   } catch (e) {
     console.warn('[Munch] Order log skipped:', e);
