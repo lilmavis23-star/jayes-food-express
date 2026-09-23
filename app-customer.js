@@ -1,6 +1,6 @@
 'use strict';
 /* =====================================================================
-   Jaye's Food Express — customer UI: home, restaurant page,
+   Munch Express — customer UI: home, restaurant page,
    cart overlay, checkout, modal.
 ===================================================================== */
 
@@ -349,31 +349,6 @@ function submitCheckout() {
 
   var num = normalizeWhatsApp(r.whatsapp);
   if (!num) { toast('This restaurant has no WhatsApp number set.'); return; }
-  /* Log the order to Supabase. Fire-and-forget: even if it fails, the
-     WhatsApp message still opens so the customer never loses their order. */
-  try {
-    SupaOrders.create({
-      restaurantId: r.id,
-      restaurantName: r.name,
-      customerName: name,
-      customerPhone: phone,
-      deliveryLocation: loc,
-      orderOption: state.checkoutOption,
-      instructions: note,
-      items: data.lines.map(function (l) {
-        return { name: l.product.name, qty: l.qty, price: l.price, line: l.line };
-      }),
-      foodTotal: data.foodTotal,
-      deliveryFee: data.deliveryFee,
-      grandTotal: grand
-  }).catch(function (err) {
-      console.warn('[Munch] Order log failed:', err);
-      toast('Order log failed: ' + (err.message || 'unknown'));
-    });
-  } catch (e) {
-    console.warn('[Munch] Order log skipped:', e);
-  }
-
   window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(msg), '_blank');
   toast('Opening WhatsApp…');
 }
