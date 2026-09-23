@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#F97316">
 <title>Jaye’s Food Express — Good food. Delivered.</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Jaye's">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -159,5 +164,16 @@
 <script src="app-auth.js"></script>
 <script src="vendor-app.js"></script>
 <script src="app-init.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').then(function (reg) {
+      console.log('[Jaye] Service worker registered', reg.scope);
+    }).catch(function (err) {
+      console.warn('[Jaye] Service worker registration failed', err);
+    });
+  });
+}
+</script>
 </body>
 </html>
