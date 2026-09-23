@@ -280,3 +280,41 @@ var SupaRealtime = {
     }
   }
 };
+
+/* ---- Orders ---- */
+var ADMIN_EMAIL = 'lilmavis23@gmail.com';  /* ⚠️ Same email as in the SQL policy */
+
+var SupaOrders = {
+  create: function (order) {
+    return sb.from('orders').insert({
+      restaurant_id: order.restaurantId,
+      restaurant_name: order.restaurantName,
+      customer_name: order.customerName,
+      customer_phone: order.customerPhone,
+      delivery_location: order.deliveryLocation,
+      order_option: order.orderOption,
+      instructions: order.instructions,
+      items: order.items,
+      food_total: order.foodTotal,
+      delivery_fee: order.deliveryFee,
+      grand_total: order.grandTotal,
+      status: 'submitted'
+    }).select().single().then(function (res) {
+      if (res.error) throw res.error;
+      return res.data;
+    });
+  },
+
+  list: function () {
+    return sb.from('orders').select('*').order('created_at', { ascending: false })
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return res.data || [];
+      });
+  },
+
+  isAdmin: function () {
+    return currentVendorUser && currentVendorUser.email === ADMIN_EMAIL;
+  }
+};
+
