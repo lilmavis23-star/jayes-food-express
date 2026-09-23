@@ -2,7 +2,50 @@
 /* =====================================================================
    Jaye's Food Express — vendor dashboard, menu manager, food form,
    restaurant settings, opening hours, WhatsApp settings.
+   Self-contained: includes category lists + dropdown helper.
 ===================================================================== */
+
+/* ============ Categories (edit these two lists to change dropdowns) ============ */
+var STORE_CATEGORIES = [
+  'Nigerian Food',
+  'Fast Food',
+  'Pastries & Cakes',
+  'Drinks',
+  'Groceries & Foodstuffs',
+  'Other'
+];
+
+var FOOD_CATEGORIES = [
+  'Rice & Meals',
+  'Chicken',
+  'Beef',
+  'Turkey',
+  'Noodles',
+  'Pastries',
+  'Cakes',
+  'Snacks',
+  'Sides',
+  'Drinks',
+  'Groceries',
+  'Other'
+];
+
+function categorySelect(id, current, list, placeholder) {
+  var opts = '';
+  var found = false;
+  list.forEach(function (c) {
+    var sel = (c === current) ? ' selected' : '';
+    if (c === current) found = true;
+    opts += '<option value="' + esc(c) + '"' + sel + '>' + esc(c) + '</option>';
+  });
+  if (current && !found) {
+    opts = '<option value="' + esc(current) + '" selected>' + esc(current) + ' (current)</option>' + opts;
+  }
+  return '<select id="' + id + '">' +
+    '<option value="">' + esc(placeholder || '— Select —') + '</option>' +
+    opts +
+    '</select>';
+}
 
 /* ============ Vendor dashboard ============ */
 function showVendorDashboard() {
@@ -140,7 +183,7 @@ function openFoodForm(productId) {
         '<div class="field"><label for="ff-price">Price (₦) *</label>' +
           '<input id="ff-price" type="number" min="0" inputmode="numeric" placeholder="2500" value="' + (p ? esc(p.price) : '') + '"></div>' +
         '<div class="field"><label for="ff-category">Category</label>' +
-          '<input id="ff-category" placeholder="e.g. Rice & Meals" value="' + esc(p ? p.category : '') + '"></div>' +
+          categorySelect('ff-category', p ? p.category : 'Rice & Meals', FOOD_CATEGORIES) + '</div>' +
         '<div class="field"><label for="ff-desc">Description</label>' +
           '<textarea id="ff-desc" rows="2" placeholder="Short tasty description">' + esc(p ? p.description : '') + '</textarea></div>' +
         '<div class="field"><label>Food photo</label>' +
@@ -266,7 +309,7 @@ function openRestaurantSettings() {
         '<div class="field"><label for="rs-addr">Address</label>' +
           '<input id="rs-addr" value="' + esc(r.address) + '"></div>' +
         '<div class="field"><label for="rs-cat">Category</label>' +
-          '<input id="rs-cat" value="' + esc(r.category) + '"></div>' +
+          categorySelect('rs-cat', r.category, STORE_CATEGORIES) + '</div>' +
         '<div class="field"><label for="rs-fee">Delivery fee (₦)</label>' +
           '<input id="rs-fee" type="number" min="0" inputmode="numeric" value="' + esc(r.deliveryFee) + '"></div>' +
         '<div class="field"><label for="rs-time">Estimated delivery time</label>' +
