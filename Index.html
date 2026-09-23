@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F97316">
+<title>Jaye’s Food Express — Good food. Delivered.</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <button class="brand" onclick="openHome()" aria-label="Jaye’s Food Express home">
+      <span class="logo">🛵</span>
+      <span><span class="name">Jaye’s Food Express</span><br><span class="tag">Good food. Delivered.</span></span>
+    </button>
+    <button class="cart-btn" onclick="openCart()">🛒 Cart <span class="cart-badge" id="cart-badge" style="display:none">0</span></button>
+  </header>
+
+  <main>
+    <!-- ============ CUSTOMER HOME ============ -->
+    <section id="screen-customer-app" class="screen active">
+      <div class="hero">
+        <div class="loc">📍 Delivering near you</div>
+        <h1>Good food.<br><span class="hl">Delivered.</span></h1>
+        <p>Browse local restaurants, build your order and send it straight to the restaurant on WhatsApp.</p>
+        <button class="btn btn-orange" onclick="scrollToRestaurants()">Browse Restaurants ↓</button>
+      </div>
+      <div class="section" id="restaurant-section">
+        <h2 class="section-title">Restaurants</h2>
+        <p class="section-sub">Pick a restaurant to see its full menu.</p>
+        <div id="restaurant-list"></div>
+      </div>
+    </section>
+
+    <!-- ============ RESTAURANT PAGE ============ -->
+    <section id="screen-restaurant-page" class="screen"></section>
+
+    <!-- ============ VENDOR LOGIN ============ -->
+    <section id="screen-vendor-login" class="screen">
+      <div class="auth-wrap">
+        <div class="auth-card">
+          <h2>Vendor Login</h2>
+          <p class="sub">Manage your restaurant on Jaye’s Food Express.</p>
+          <form onsubmit="return handleVendorLogin(event)">
+            <div class="field"><label for="vl-email">Email</label>
+              <input id="vl-email" type="email" autocomplete="email" placeholder="you@example.com"></div>
+            <div class="field"><label for="vl-pass">Password</label>
+              <input id="vl-pass" type="password" autocomplete="current-password" placeholder="Your password"></div>
+            <button class="btn btn-orange btn-block" type="submit">Login</button>
+          </form>
+          <p class="auth-switch">New vendor? <button onclick="openVendorRegister()">Create a vendor account</button></p>
+          <p class="auth-switch"><button onclick="openHome()">← Back to customer site</button></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VENDOR REGISTER ============ -->
+    <section id="screen-vendor-register" class="screen">
+      <div class="auth-wrap">
+        <div class="auth-card">
+          <h2>Create Vendor Account</h2>
+          <p class="sub">Register your restaurant and start receiving orders.</p>
+          <form onsubmit="return handleVendorRegister(event)">
+            <div class="field"><label for="vr-rname">Restaurant name</label>
+              <input id="vr-rname" placeholder="e.g. Ade’s Place"></div>
+            <div class="field"><label for="vr-oname">Owner name</label>
+              <input id="vr-oname" placeholder="Your full name"></div>
+            <div class="field"><label for="vr-email">Email</label>
+              <input id="vr-email" type="email" autocomplete="email" placeholder="you@example.com"></div>
+            <div class="field"><label for="vr-phone">Phone / WhatsApp number</label>
+              <input id="vr-phone" type="tel" placeholder="080XXXXXXXX"></div>
+            <div class="field"><label for="vr-pass">Password</label>
+              <input id="vr-pass" type="password" autocomplete="new-password" placeholder="Minimum 6 characters">
+              <p class="hint">Frontend prototype only — stored locally until Supabase Auth is added.</p></div>
+            <button class="btn btn-orange btn-block" type="submit">Create Account</button>
+          </form>
+          <p class="auth-switch">Already registered? <button onclick="openVendorLogin()">Login</button></p>
+          <p class="auth-switch"><button onclick="openHome()">← Back to customer site</button></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VENDOR DASHBOARD ============ -->
+    <section id="screen-vendor-dashboard" class="screen"></section>
+
+    <!-- ============ MENU MANAGER ============ -->
+    <section id="screen-menu-manager" class="screen"></section>
+
+    <!-- ============ FOOD FORM ============ -->
+    <section id="screen-food-form" class="screen"></section>
+
+    <!-- ============ RESTAURANT SETTINGS ============ -->
+    <section id="screen-restaurant-settings" class="screen"></section>
+
+    <!-- ============ OPENING HOURS ============ -->
+    <section id="screen-opening-hours" class="screen"></section>
+
+    <!-- ============ WHATSAPP SETTINGS ============ -->
+    <section id="screen-whatsapp-settings" class="screen"></section>
+  </main>
+
+  <footer>
+    <div class="f-brand">🛵 Jaye’s Food Express</div>
+    <div>Good food. Delivered.</div>
+    <div class="f-links">
+      <button onclick="showInfo('Privacy')">Privacy</button>
+      <button onclick="showInfo('Terms')">Terms</button>
+      <button onclick="showInfo('About')">About</button>
+      <button onclick="showInfo('Founder')">Founder</button>
+    </div>
+    <div class="f-copy">© 2026 Jaye’s Food Express.</div>
+  </footer>
+
+  <nav id="bottom-nav">
+    <div class="nav-inner">
+      <button class="nav-item active" id="nav-home" onclick="openHome()"><span class="ico">🏠</span>Home</button>
+      <button class="nav-item" id="nav-rest" onclick="openRestaurantList()"><span class="ico">🍽️</span>Restaurants</button>
+      <button class="nav-item" id="nav-cart" onclick="openCart()"><span class="ico">🛒</span>Cart<span class="nav-badge" id="nav-cart-badge" style="display:none">0</span></button>
+      <button class="nav-item" id="nav-vendor" onclick="openVendorAccess()"><span class="ico">🏪</span>Vendor</button>
+    </div>
+  </nav>
+</div>
+
+<!-- ============ CART OVERLAY ============ -->
+<div id="cart-overlay" class="overlay" onclick="overlayBackdropClick(event,'cart-overlay')">
+  <div class="panel">
+    <div class="grab"></div>
+    <div class="panel-head">
+      <h2>Your Cart</h2>
+      <button class="panel-close" onclick="closeCart()" aria-label="Close cart">✕</button>
+    </div>
+    <div id="cart-body"></div>
+  </div>
+</div>
+
+<!-- ============ CHECKOUT OVERLAY ============ -->
+<div id="checkout-overlay" class="overlay" onclick="overlayBackdropClick(event,'checkout-overlay')">
+  <div class="panel">
+    <div class="grab"></div>
+    <div class="panel-head">
+      <h2>Checkout</h2>
+      <button class="panel-close" onclick="closeCheckout()" aria-label="Close checkout">✕</button>
+    </div>
+    <div id="checkout-body"></div>
+  </div>
+</div>
+
+<!-- ============ GENERIC MODAL ============ -->
+<div id="modal" class="modal-backdrop" onclick="if(event.target===this)closeModal()"></div>
+
+<!-- ============ TOAST ============ -->
+<div id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app-core.js"></script>
+<script src="app-customer.js"></script>
+<script src="app-auth.js"></script>
+<script src="app-vendor.js"></script>
+<script src="app-init.js"></script>
+</body>
+</html>
