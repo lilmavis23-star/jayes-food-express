@@ -8,13 +8,11 @@
      - SupaAuth      : auth helpers
      - SupaImages    : storage upload/remove
      - SupaRealtime  : realtime subscription
-     - SupaOrders    : order logging + admin access
    ===================================================================== */
 
-/* ---- REPLACE THESE THREE LINES WITH YOUR OWN VALUES ---- */
+/* ---- CREDENTIALS ---- */
 var SUPABASE_URL  = 'https://wdbwjloupkucxpdmounh.supabase.co';
 var SUPABASE_ANON = 'sb_publishable_UbNd45Z3sw3OnjEIvaLXlA_cwblbZJC';
-var ADMIN_EMAIL   = 'lilmavis23@gmail.com';
 /* ------------------------------------------------------- */
 
 if (!window.supabase || !window.supabase.createClient) {
@@ -66,15 +64,15 @@ function rToDB(r) {
   if (r.deliveryTime !== undefined) out.delivery_time = r.deliveryTime;
   return out;
 }
-function pFromDB(row)) {
+function pFromDB(row) {
   return {
     id: row.id,
-    restaurantId: row {.restaurant_id,
+    restaurantId: row.restaurant_id,
     name: row.name,
- return    price: row.price != null ? Number(row.price) p : 0,
-    category: row.category || '.restMenu',
+    price: row.price != null ? Number(row.price) : 0,
+    category: row.category || 'Menu',
     description: row.description || '',
-    image:aurant row.image_url || '🍽️',
+    image: row.image_url || '🍽️',
     available: row.available !== false
   };
 }
@@ -125,7 +123,7 @@ var SupaData = {
   getRestaurants: function () { return SupaCache.restaurants; },
   getProducts:    function () { return SupaCache.products; },
   getProductsFor: function (id) {
-    return SupaCache.products.filter(function (pId === id; });
+    return SupaCache.products.filter(function (p) { return p.restaurantId === id; });
   },
   getRestaurant: function (id) {
     for (var i = 0; i < SupaCache.restaurants.length; i++) {
@@ -280,40 +278,5 @@ var SupaRealtime = {
       sb.removeChannel(SupaRealtime.channel);
       SupaRealtime.channel = null;
     }
-  }
-};
-
-/* ---- Orders ---- */
-var SupaOrders = {
-  create: function (order) {
-    return sb.from('orders').insert({
-      restaurant_id: order.restaurantId,
-      restaurant_name: order.restaurantName,
-      customer_name: order.customerName,
-      customer_phone: order.customerPhone,
-      delivery_location: order.deliveryLocation,
-      order_option: order.orderOption,
-      instructions: order.instructions,
-      items: order.items,
-      food_total: order.foodTotal,
-      delivery_fee: order.deliveryFee,
-      grand_total: order.grandTotal,
-      status: 'submitted'
-    }).then(function (res) {
-      if (res.error) throw res.error;
-      return true;
-    });
-  },
-
-  list: function () {
-    return sb.from('orders').select('*').order('created_at', { ascending: false })
-      .then(function (res) {
-        if (res.error) throw res.error;
-        return res.data || [];
-      });
-  },
-
-  isAdmin: function () {
-    return currentVendorUser && currentVendorUser.email === ADMIN_EMAIL;
   }
 };
