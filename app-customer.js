@@ -350,7 +350,14 @@ function submitCheckout() {
   var num = normalizeWhatsApp(r.whatsapp);
   if (!num) { toast('This restaurant has no WhatsApp number set.'); return; }
   window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(msg), '_blank');
-  toast('Opening WhatsApp…');
+
+  /* Order handed off to WhatsApp — clear the cart and reset the UI */
+  setCart(null);
+  closeCheckout();
+  closeCart();
+  renderRestaurantList();
+  showScreen('customer-app');
+  toast('Order sent 🎉');
 }
 
 /* ============ Modal ============ */
