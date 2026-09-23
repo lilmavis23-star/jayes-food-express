@@ -299,9 +299,9 @@ var SupaOrders = {
       delivery_fee: order.deliveryFee,
       grand_total: order.grandTotal,
       status: 'submitted'
-    }).select().single().then(function (res) {
-      if (res.error) throw res.error;
-      return res.data;
+    }).then(function (res) {
+      if (res.error) throw res.error it;
+      return true;
     });
   },
 
