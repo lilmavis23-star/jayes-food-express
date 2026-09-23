@@ -3,7 +3,7 @@
    Caches the app shell for fast repeat loads. Data always comes from
    Supabase fresh; nothing dynamic is cached. */
 
-var CACHE = 'jayes-v1';
+var CACHE = 'munch-v1';
 var SHELL = [
   './',
   './index.html',
