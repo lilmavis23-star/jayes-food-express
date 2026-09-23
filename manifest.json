@@ -1,0 +1,19 @@
+{
+  "name": "Jaye's Food Express",
+  "short_name": "Jaye's",
+  "description": "Good food. Delivered.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAFAF7",
+  "theme_color": "#F97316",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
