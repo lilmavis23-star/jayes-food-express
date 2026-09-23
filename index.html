@@ -168,9 +168,9 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('sw.js').then(function (reg) {
-      console.log('[Jaye] Service worker registered', reg.scope);
+      console.log('[Munch] Service worker registered', reg.scope);
     }).catch(function (err) {
-      console.warn('[Jaye] Service worker registration failed', err);
+      console.warn('[Munch] Service worker registration failed', err);
     });
   });
 }
