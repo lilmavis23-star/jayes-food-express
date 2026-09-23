@@ -12,7 +12,7 @@
    ===================================================================== */
 
 /* ---- REPLACE THESE THREE LINES WITH YOUR OWN VALUES ---- */
-var SUPABASE_URL  = 'https://wdbwjloupkucxpdmounh.supabase.co/';
+var SUPABASE_URL  = 'https://wdbwjloupkucxpdmounh.supabase.co';
 var SUPABASE_ANON = 'sb_publishable_UbNd45Z3sw3OnjEIvaLXlA_cwblbZJC';
 var ADMIN_EMAIL   = 'lilmavis23@gmail.com';
 /* ------------------------------------------------------- */
