@@ -1,6 +1,6 @@
 {
-  "name": "Jaye's Food Express",
-  "short_name": "Jaye's",
+  "name": "Munch Express",
+  "short_name": "Munch",
   "description": "Good food. Delivered.",
   "start_url": "./",
   "scope": "./",
