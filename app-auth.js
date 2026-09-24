@@ -69,31 +69,33 @@ function handleVendorRegister(e) {
   var btn = e.target.querySelector('button[type=submit]');
   if (btn) { btn.disabled = true; btn.textContent = 'Creating…'; }
 
-  SupaAuth.signUp(email, pass, { owner_name: oname })
+  SupaAuth.signUp(email, pass, {
+    owner_name: oname,
+    restaurant_name: rname,
+    phone: phone
+  })
     .then(function (data) {
-      if (data && data.session) return data;
-      return SupaAuth.signIn(email, pass);
-    })
-    .then(function (data) {
-      var userId = data && data.user ? data.user.id :
-                   (data && data.session && data.session.user ? data.session.user.id : null);
-      if (!userId) throw new Error('Could not establish session after signup.');
-      return SupaData.createRestaurant({
-        name: rname, category: 'General', rating: 5.0,
-        description: '', image: '🍽️', active: false,
-        openingTime: '08:00', closingTime: '20:00',
-        whatsapp: phone, phone: phone, address: '',
-        deliveryFee: 1000, deliveryTime: '30–45 min'
-      }, userId);
-    })
-    .then(function () { return refreshVendorContext(); })
-    .then(function () {
-      toast('Welcome, ' + oname + '!');
-      showVendorDashboard();
+      if (!data.session) {
+        /* Email confirmation is ON. The restaurant is created automatically
+           by a database trigger when the account is confirmed. */
+        toast('Almost there! Check your inbox for the confirmation link, then log in.');
+        setTimeout(function () { openVendorLogin(); }, 2400);
+        return null;
+      }
+      return refreshVendorContext().then(function () {
+        toast('Welcome, ' + oname + '!');
+        showVendorDashboard();
+      });
     })
     .catch(function (err) {
-      console.error('[Jaye] Signup failed:', err);
-      toast(err.message || 'Could not create account.');
+      console.error('[Munch] Signup failed:', err);
+      var msg = err.message || 'Could not create account.';
+      if (/email not confirmed/i.test(msg)) {
+        msg = 'Please confirm your email first — check your inbox.';
+      } else if (/user already registered/i.test(msg)) {
+        msg = 'An account with this email already exists. Try logging in.';
+      }
+      toast(msg);
     })
     .then(function () {
       if (btn) { btn.disabled = false; btn.textContent = 'Create Account'; }
@@ -123,9 +125,15 @@ function handleVendorLogin(e) {
       toast('Welcome back!');
       showVendorDashboard();
     })
-    .catch(function (err) {
-      console.error('[Jaye] Login failed:', err);
-      toast(err.message || 'Invalid email or password.');
+ .catch(function (err) {
+      console.error('[Munch] Login failed:', err);
+      var msg = err.message || 'Invalid email or password.';
+      if (/email not confirmed/i.test(msg)) {
+        msg = 'Please confirm your email first — check your inbox.';
+      } else if (/invalid login credentials/i.test(msg)) {
+        msg = 'Incorrect email or password.';
+      }
+      toast(msg);
     })
     .then(function () {
       if (btn) { btn.disabled = false; btn.textContent = 'Login'; }
