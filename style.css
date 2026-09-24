@@ -241,10 +241,10 @@ header{
 
 /* ============ Modal ============ */
 .modal-backdrop{position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:80;display:none;
-  align-items:center;justify-content:center;padding:22px}
+  align-items:center;justify-content:center;padding:14px}
 .modal-backdrop.open{display:flex}
-.modal-card{background:#fff;border-radius:20px;padding:22px 18px;max-width:420px;width:100%;
-  max-height:80vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal-card{background:#fff;border-radius:20px;padding:24px 20px;max-width:460px;width:100%;
+  max-height:90vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.25)}
 .modal-card h3{color:var(--teal);font-size:1.1rem;margin-bottom:10px}
 .modal-body{font-size:.9rem;color:var(--text);margin-bottom:6px}
 .modal-actions{display:flex;gap:10px;margin-top:18px}
