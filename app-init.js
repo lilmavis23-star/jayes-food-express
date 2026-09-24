@@ -57,9 +57,20 @@ async function init() {
     console.warn('[Jaye] Session restore failed:', err);
   }
 
-  updateCartBadge();
+updateCartBadge();
   renderRestaurantList();
   showScreen('customer-app');
+
+  /* Deep-link: URL like ?r=RESTAURANT_ID opens that restaurant's menu */
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var deepLinkId = params.get('r');
+    if (deepLinkId && getRestaurant(deepLinkId)) {
+      openRestaurantPage(deepLinkId);
+    }
+  } catch (e) {
+    console.warn('[Munch] Deep link failed:', e);
+  }
 
   SupaRealtime.start(function () {
     scheduleRender();
