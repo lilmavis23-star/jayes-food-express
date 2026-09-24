@@ -106,6 +106,13 @@ function openHome() {
   renderRestaurantList();
   showScreen('customer-app');
   updateCartBadge();
+  try {
+    var url = new URL(window.location.href);
+    if (url.searchParams.has('r')) {
+      url.searchParams.delete('r');
+      window.history.replaceState({}, '', url.toString());
+    }
+  } catch (e) {}
 }
 function openRestaurantList() {
   openHome();
@@ -151,6 +158,11 @@ function openRestaurantPage(id) {
   state.currentRestaurantId = id;
   renderRestaurantPage();
   showScreen('restaurant-page');
+  try {
+    var url = new URL(window.location.href);
+    url.searchParams.set('r', id);
+    window.history.replaceState({}, '', url.toString());
+  } catch (e) {}
 }
 
 function renderRestaurantPage() {
