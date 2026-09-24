@@ -7,10 +7,10 @@
 /* ============ Footer info ============ */
 function showInfo(topic) {
   var content = {
-    'Privacy': '<p>Jaye’s Food Express stores cart data locally on your device. Vendor and menu data is securely stored with Supabase.</p><p>When you place an order, your name, phone and delivery details are sent directly to the restaurant you chose via WhatsApp.</p>',
-    'Terms': '<p>Jaye’s Food Express connects customers with local restaurants. Prices, availability and delivery fees are set by each restaurant.</p><p>Orders are confirmed directly with the restaurant on WhatsApp. This frontend prototype does not process payments.</p>',
-    'About': '<p>Jaye’s Food Express is a multi-restaurant food ordering platform built for local communities. Browse restaurants, build your cart and send your order straight to the restaurant on WhatsApp — fast, simple, no middleman.</p>',
-    'Founder': '<p>Jaye’s Food Express was founded with one simple idea: good food, delivered, without the hassle.</p><p>Built with ❤️ for local restaurants and the people who love their food.</p>'
+    'Privacy': '<p>Munch Express stores cart data locally on your device. Vendor and menu data is securely stored with Supabase.</p><p>When you place an order, your name, phone and delivery details are sent directly to the restaurant you chose.</p>',
+    'Terms': '<p>Munch Express connects customers with local restaurants. Prices, availability and delivery fees are set by each restaurant.</p><p>Orders are confirmed directly with the restaurant.</p>',
+    'About': '<p>Munch Express is a multi-restaurant food ordering platform built for local communities. Browse restaurants, build your cart and send your order straight to the restaurant — fast, simple, no middleman.</p>',
+    'Founder': '<p>Munch Express was founded with one simple idea: good food, delivered, without the hassle.</p><p>Built with ❤️ for local restaurants and the people who love their food.</p>'
   }[topic] || '<p>Coming soon.</p>';
   showModal({
     title: topic,
