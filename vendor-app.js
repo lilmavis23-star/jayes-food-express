@@ -72,9 +72,10 @@ function showVendorDashboard() {
       '<button class="quick-item" onclick="openMenuManager()"><span class="qi-ico">🍽️</span>Manage Menu <span class="qi-arrow">›</span></button>' +
       '<button class="quick-item" onclick="openRestaurantSettings()"><span class="qi-ico">⚙️</span>Restaurant Settings <span class="qi-arrow">›</span></button>' +
       '<button class="quick-item" onclick="openOpeningHours()"><span class="qi-ico">🕒</span>Opening Hours <span class="qi-arrow">›</span></button>' +
-      '<button class="quick-item" onclick="openWhatsAppSettings()"><span class="qi-ico">💬</span>WhatsApp Settings <span class="qi-arrow">›</span></button>' +
+   '<button class="quick-item" onclick="openWhatsAppSettings()"><span class="qi-ico">💬</span>WhatsApp Settings <span class="qi-arrow">›</span></button>' +
+      '<button class="quick-item" onclick="openShareModal()"><span class="qi-ico">🔗</span>Share / QR Code <span class="qi-arrow">›</span></button>' +
       '<button class="quick-item" onclick="logoutVendor()"><span class="qi-ico">🚪</span>Logout <span class="qi-arrow">›</span></button>' +
-    '</div>';
+     '</div>';
   showScreen('vendor-dashboard');
 }
 
@@ -474,4 +475,55 @@ function saveWhatsAppSettings() {
       showVendorDashboard();
     })
     .catch(function (err) { toast(err.message || 'Could not save.'); });
+}
+
+/* ============ Share / QR Code ============ */
+function openShareModal() {
+  var ctx = requireVendorScreen();
+  if (!ctx) return;
+  var r = ctx.restaurant;
+
+  var baseUrl = window.location.origin + window.location.pathname;
+  var shareUrl = baseUrl + '?r=' + encodeURIComponent(r.id);
+
+  var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=' +
+              encodeURIComponent(shareUrl);
+
+  var body =
+    '<p style="font-size:.85rem;color:var(--muted);margin-bottom:14px;">' +
+      'Print this QR code or share the link. When a customer scans or taps it, ' +
+      'your menu opens directly.' +
+    '</p>' +
+    '<div style="text-align:center;padding:8px 0 14px;">' +
+      '<img src="' + qrUrl + '" alt="QR code" ' +
+        'style="width:220px;height:220px;background:#fff;padding:8px;' +
+        'border-radius:12px;border:1px solid var(--border);display:inline-block;">' +
+    '</div>' +
+    '<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;' +
+      'padding:10px 12px;font-size:.78rem;word-break:break-all;margin-bottom:14px;' +
+      'font-family:monospace;color:var(--text);">' +
+      esc(shareUrl) +
+    '</div>' +
+    '<p style="font-size:.72rem;color:var(--muted);text-align:center;">' +
+      'Long-press the QR to save it to your photos. Long-press the link to copy.'
+    '</p>';
+
+  showModal({
+    title: 'Share ' + r.name,
+    body: body,
+    actions: [
+      { label: 'Copy Link', className: 'btn-teal', keepOpen: true, onClick: function () {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(shareUrl).then(function () {
+              toast('Link copied');
+            }).catch(function () {
+              toast('Copy the link from the box above');
+            });
+          } else {
+            toast('Copy the link from the box above');
+          }
+        } },
+      { label: 'Close', className: 'btn-outline' }
+    ]
+  });
 }
