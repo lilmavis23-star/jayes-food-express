@@ -150,3 +150,38 @@ function logoutVendor() {
     openVendorLogin();
   });
 }
+
+
+/* ============ Resend confirmation email ============ */
+function openResendConfirm() {
+  showModal({
+    title: 'Resend confirmation email',
+    body:
+      '<div class="field"><label for="resend-email">Email address</label>' +
+        '<input id="resend-email" type="email" placeholder="you@example.com">' +
+      '</div>' +
+      '<p style="font-size:.8rem;color:var(--muted);margin:0;">' +
+        'We’ll send a fresh confirmation link to this address.' +
+      '</p>',
+    actions: [
+      { label: 'Cancel', className: 'btn-outline' },
+      { label: 'Send Link', className: 'btn-orange', keepOpen: true, onClick: function () {
+          var email = fieldVal('resend-email');
+          if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            toast('Please enter a valid email address.');
+            return;
+          }
+          sb.auth.resend({ type: 'signup', email: email })
+            .then(function (res) {
+              if (res.error) throw res.error;
+              closeModal();
+              toast('Confirmation email sent — check your inbox.');
+            })
+            .catch(function (err) {
+              console.warn('[Munch] Resend failed:', err);
+              toast(err.message || 'Could not resend.');
+            });
+        } }
+    ]
+  });
+}
