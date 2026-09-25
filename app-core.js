@@ -11,7 +11,7 @@ var IMG_TARGETS = {
   food:       { maxDim: 900,  quality: 0.80 }
 };
 
-var state = { currentRestaurantId: null, checkoutOption: 'Delivery' };
+var state = { currentRestaurantId: null, checkoutOption: 'Delivery', filter: 'All', search: '' };
 
 var currentVendorUser = null;
 var currentVendorRestaurant = null;
