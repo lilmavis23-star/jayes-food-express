@@ -32,9 +32,15 @@
         <p>Browse local restaurants, build your order and send it straight to the restaurant on WhatsApp.</p>
         <button class="btn btn-orange" onclick="scrollToRestaurants()">Browse Restaurants ↓</button>
       </div>
-      <div class="section" id="restaurant-section">
+     <div class="section" id="restaurant-section">
         <h2 class="section-title">Restaurants</h2>
         <p class="section-sub">Pick a restaurant to see its full menu.</p>
+        <div id="restaurant-controls">
+          <div class="search-wrap">
+            <input type="search" id="search-input" placeholder="Search restaurants…" oninput="handleSearchInput(this.value)">
+          </div>
+          <div class="filter-chips" id="filter-chips"></div>
+        </div>
         <div id="restaurant-list"></div>
       </div>
     </section>
