@@ -124,8 +124,12 @@ function scrollToRestaurants() { openRestaurantList(); }
 function renderRestaurantList() {
   var el = document.getElementById('restaurant-list');
   if (!el) return;
-  var list = getRestaurants();
-  if (!list.length) {
+  var allRestaurants = getRestaurants();
+
+  var controls = document.getElementById('restaurant-controls');
+  if (controls) controls.style.display = allRestaurants.length ? '' : 'none';
+
+  if (!allRestaurants.length) {
     el.innerHTML =
       '<div class="empty-state">' +
         '<div class="big">🏪</div>' +
@@ -134,6 +138,33 @@ function renderRestaurantList() {
       '</div>';
     return;
   }
+
+  var list = allRestaurants.filter(function (r) {
+    if (state.filter !== 'All') {
+      var rCat = r.category || 'Other';
+      if (rCat !== state.filter) return false;
+    }
+    if (state.search) {
+      var q = state.search.toLowerCase();
+      var name = (r.name || '').toLowerCase();
+      var cat = (r.category || '').toLowerCase();
+      if (name.indexOf(q) === -1 && cat.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+
+  renderFilterChips(allRestaurants);
+
+  if (!list.length) {
+    el.innerHTML =
+      '<div class="empty-state">' +
+        '<div class="big">🔍</div>' +
+        '<p>No restaurants match your search.</p>' +
+        '<p class="mt8" style="font-size:.82rem;">Try a different category or clear the search.</p>' +
+      '</div>';
+    return;
+  }
+
   el.innerHTML = list.map(function (r) {
     var open = isRestaurantOpen(r);
     return '<article class="rest-card' + (open ? '' : ' closed') + '">' +
@@ -149,6 +180,32 @@ function renderRestaurantList() {
         : '<button class="btn btn-disabled btn-block" disabled>🔴 Closed — unavailable</button>') +
     '</article>';
   }).join('');
+}
+
+function renderFilterChips(allRestaurants) {
+  var wrap = document.getElementById('filter-chips');
+  if (!wrap) return;
+  var seen = { 'All': true };
+  allRestaurants.forEach(function (r) {
+    var c = r.category || 'Other';
+    seen[c] = true;
+  });
+  var cats = Object.keys(seen);
+  if (cats.indexOf(state.filter) === -1) state.filter = 'All';
+  wrap.innerHTML = cats.map(function (c) {
+    var active = state.filter === c ? ' active' : '';
+    return '<button class="chip' + active + '" data-cat="' + esc(c) + '" onclick="setFilter(this.dataset.cat)">' + esc(c) + '</button>';
+  }).join('');
+}
+
+function setFilter(cat) {
+  state.filter = cat;
+  renderRestaurantList();
+}
+
+function handleSearchInput(val) {
+  state.search = String(val || '').trim();
+  renderRestaurantList();
 }
 
 function openRestaurantPage(id) {
