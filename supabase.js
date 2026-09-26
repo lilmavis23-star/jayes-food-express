@@ -44,6 +44,7 @@ function rFromDB(row) {
     phone: row.phone || '',
     address: row.address || '',
     deliveryFee: row.delivery_fee != null ? Number(row.delivery_fee) : 0,
+    disposableFee: row.disposable_fee != null ? Number(row.disposable_fee) : 0,
     deliveryTime: row.delivery_time || '30–45 min'
   };
 }
@@ -61,6 +62,7 @@ function rToDB(r) {
   if (r.phone        !== undefined) out.phone         = r.phone;
   if (r.address      !== undefined) out.address       = r.address;
   if (r.deliveryFee  !== undefined) out.delivery_fee  = r.deliveryFee;
+  if (r.disposableFee !== undefined) out.disposable_fee = r.disposableFee;
   if (r.deliveryTime !== undefined) out.delivery_time = r.deliveryTime;
   return out;
 }
