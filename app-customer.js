@@ -85,7 +85,7 @@ function clearCartWithConfirm() {
 
 function cartLines() {
   var c = getCart();
-  if (!c) return { cart: null, lines: [], foodTotal: 0, restaurant: null, deliveryFee: 0 };
+  if (!c) return { cart: null, lines: [], foodTotal: 0, restaurant: null, deliveryFee: 0, deliveryFee: 0 };
   var r = getRestaurant(c.restaurantId);
   var lines = [], foodTotal = 0;
   c.items.forEach(function (it) {
@@ -98,7 +98,8 @@ function cartLines() {
     lines.push({ product: p, qty: qty, price: price, line: line });
   });
   var fee = r ? toNum(r.deliveryFee) : 0;
-  return { cart: c, lines: lines, foodTotal: foodTotal, restaurant: r, deliveryFee: fee };
+  var pack = r ? toNum(r.disposableFee) : 0;
+  return { cart: c, lines: lines, foodTotal: foodTotal, restaurant: r, deliveryFee: fee, disposableFee: pack };
 }
 
 /* ============ Customer: home & restaurant page ============ */
@@ -311,13 +312,16 @@ function renderCart() {
         '<button class="remove-btn" onclick="removeFromCart(\'' + esc(l.product.id) + '\')">Remove</button></div>' +
     '</div>';
   }).join('');
-  var grand = data.foodTotal + data.deliveryFee;
+  var grand = data.foodTotal + data.deliveryFee + data.disposableFee;
   el.innerHTML =
     '<p class="cart-rest">Ordering from <strong>' + esc(r ? r.name : 'Restaurant') + '</strong></p>' +
     linesHTML +
-    '<div class="totals">' +
+   '<div class="totals">' +
       '<div class="row"><span>Food Total</span><span>' + money(data.foodTotal) + '</span></div>' +
       '<div class="row"><span>Delivery Fee</span><span>' + money(data.deliveryFee) + '</span></div>' +
+      (data.disposableFee > 0
+        ? '<div class="row"><span>Disposable Pack</span><span>' + money(data.disposableFee) + '</span></div>'
+        : '') +
       '<div class="row grand"><span>Grand Total</span><span>' + money(grand) + '</span></div>' +
     '</div>' +
     '<div class="btn-row">' +
@@ -360,8 +364,11 @@ function renderCheckout() {
         return '<div class="row-between"><span class="rt">' + esc(l.product.name) + ' × ' + l.qty + '</span>' +
                '<span class="rt">' + money(l.line) + '</span></div>';
       }).join('') +
-      '<div class="row-between mt8"><span class="rs">Food Total</span><span class="rt">' + money(data.foodTotal) + '</span></div>' +
+  '<div class="row-between mt8"><span class="rs">Food Total</span><span class="rt">' + money(data.foodTotal) + '</span></div>' +
       '<div class="row-between"><span class="rs">Delivery</span><span class="rt">' + money(data.deliveryFee) + '</span></div>' +
+      (data.disposableFee > 0
+        ? '<div class="row-between"><span class="rs">Disposable Pack</span><span class="rt">' + money(data.disposableFee) + '</span></div>'
+        : '') +
       '<div class="row-between"><span class="rt">Total</span><span class="rt" style="color:var(--teal)">' + money(grand) + '</span></div>' +
     '</div>' +
     '<div class="form-card"><h3>CUSTOMER DETAILS</h3>' +
@@ -397,7 +404,7 @@ function submitCheckout() {
   if (state.checkoutOption === 'Delivery') ok = markInvalid('co-loc', !loc) && ok;
   if (!ok) { toast('Please fill in the required fields.'); return; }
 
-  var grand = data.foodTotal + data.deliveryFee;
+  var grand = data.foodTotal + data.deliveryFee + data.disposableFee;
   var lines = data.lines.map(function (l) {
     return l.product.name + ' × ' + l.qty + ' — ' + money(l.line);
   }).join('\n');
@@ -407,6 +414,7 @@ function submitCheckout() {
     lines + '\n\n' +
     'Food Total: ' + money(data.foodTotal) + '\n' +
     'Delivery: ' + money(data.deliveryFee) + '\n' +
+    (data.disposableFee > 0 ? 'Disposable Pack: ' + money(data.disposableFee) + '\n' : '') +
     'Total: ' + money(grand) + '\n\n' +
     'CUSTOMER DETAILS\n\n' +
     'Name: ' + name + '\n' +
