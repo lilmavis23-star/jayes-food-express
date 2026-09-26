@@ -311,8 +311,11 @@ function openRestaurantSettings() {
           '<input id="rs-addr" value="' + esc(r.address) + '"></div>' +
         '<div class="field"><label for="rs-cat">Category</label>' +
           categorySelect('rs-cat', r.category, STORE_CATEGORIES) + '</div>' +
-        '<div class="field"><label for="rs-fee">Delivery fee (₦)</label>' +
+       '<div class="field"><label for="rs-fee">Delivery fee (₦)</label>' +
           '<input id="rs-fee" type="number" min="0" inputmode="numeric" value="' + esc(r.deliveryFee) + '"></div>' +
+        '<div class="field"><label for="rs-disposable">Disposable pack fee (₦)</label>' +
+          '<input id="rs-disposable" type="number" min="0" inputmode="numeric" value="' + esc(r.disposableFee || 0) + '">' +
+          '<p class="hint">Flat fee added to every order for takeaway packs. Set 0 if you don\'t charge.</p></div>' +
         '<div class="field"><label for="rs-time">Estimated delivery time</label>' +
           '<input id="rs-time" value="' + esc(r.deliveryTime) + '"></div>' +
         '<div class="field"><label for="rs-desc">Description</label>' +
@@ -357,6 +360,7 @@ function saveRestaurantSettings() {
     address: fieldVal('rs-addr'),
     category: fieldVal('rs-cat') || 'General',
     deliveryFee: Math.max(0, toNum(fieldVal('rs-fee'))),
+    disposableFee: Math.max(0, toNum(fieldVal('rs-disposable'))),
     deliveryTime: fieldVal('rs-time') || '30–45 min',
     description: fieldVal('rs-desc'),
     image: imgEl ? imgEl.value.trim() : '',
