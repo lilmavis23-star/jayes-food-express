@@ -34,7 +34,7 @@ header{
   border-radius:11px;
   box-shadow:0 2px 8px rgba(249,115,22,.4);
 }
-.brand .logo svg{width:1500%;height:100%;display:block}
+.brand .logo svg{width:150%;height:100%;display:block}
 .brand .name{font-weight:800;color:var(--teal);font-size:1rem;line-height:1.15}
 .brand .tag{font-size:.68rem;color:var(--muted);font-weight:600}
 .cart-btn{position:relative;background:var(--orange);color:#fff;border:none;border-radius:999px;
