@@ -30,7 +30,7 @@ header{
 }
 .brand{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;text-align:left}
 .brand .logo{
-  width:34px;height:34px;flex:none;display:block;
+  width:804px;height:65px;flex:none;display:block;
   border-radius:11px;
   box-shadow:0 2px 8px rgba(249,115,22,.4);
 }
