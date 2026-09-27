@@ -30,7 +30,8 @@ header{
 }
 .brand{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;text-align:left}
 .brand .logo{width:34px;height:34px;border-radius:11px;background:var(--orange);color:#fff;
-  display:grid;place-items:center;font-size:1.15rem;flex:none;box-shadow:0 2px 6px rgba(249,115,22,.35)}
+  display:grid;place-items:center;font-size:1.2rem;font-weight:900;letter-spacing:-0.5px;
+  flex:none;box-shadow:0 2px 6px rgba(249,115,22,.35)}
 .brand .name{font-weight:800;color:var(--teal);font-size:1rem;line-height:1.15}
 .brand .tag{font-size:.68rem;color:var(--muted);font-weight:600}
 .cart-btn{position:relative;background:var(--orange);color:#fff;border:none;border-radius:999px;
@@ -130,7 +131,6 @@ header{
 #bottom-nav .nav-inner{max-width:560px;margin:0 auto;width:100%;display:flex}
 .nav-item{flex:1;background:none;border:none;padding:9px 4px 8px;display:flex;flex-direction:column;align-items:center;
   gap:2px;font-size:.68rem;font-weight:700;color:var(--muted);cursor:pointer;position:relative}
-.nav-item .ico{font-size:1.25rem}
 .nav-item.active{color:var(--teal)}
 .nav-item.active .ico{transform:translateY(-1px)}
 .nav-badge{position:absolute;top:2px;right:calc(50% - 22px);background:var(--orange);color:#fff;font-size:.62rem;
@@ -319,3 +319,20 @@ footer .f-copy{font-size:.72rem;color:#9CA3AF}
   box-shadow: 0 3px 10px rgba(249,115,22,.28);
 }
 
+/* ============ SVG icon sizing ============ */
+.nav-item .nav-ico {
+  width: 22px;
+  height: 22px;
+  display: block;
+  margin-bottom: 2px;
+}
+.nav-item > span {
+  font-size: .68rem;
+  font-weight: 700;
+}
+.cart-btn .btn-ico {
+  width: 18px;
+  height: 18px;
+  display: block;
+  flex: none;
+}
