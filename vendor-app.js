@@ -68,17 +68,101 @@ function showVendorDashboard() {
       '<div class="stat"><div class="num">' + count + '</div><div class="lbl">FOODS</div></div>' +
       '<div class="stat"><div class="num">' + avail + '</div><div class="lbl">AVAILABLE</div></div>' +
     '</div>' +
+    '<div id="orders-stats" class="stat-row">' +
+      '<div class="stat"><div class="num">…</div><div class="lbl">TODAY</div></div>' +
+      '<div class="stat"><div class="num">…</div><div class="lbl">THIS WEEK</div></div>' +
+      '<div class="stat"><div class="num">…</div><div class="lbl">THIS MONTH</div></div>' +
+    '</div>' +
+    '<div id="recent-orders" style="padding:0 16px 6px;"></div>' +
     '<div class="quick-list">' +
       '<button class="quick-item" onclick="openMenuManager()"><span class="qi-ico">🍽️</span>Manage Menu <span class="qi-arrow">›</span></button>' +
       '<button class="quick-item" onclick="openRestaurantSettings()"><span class="qi-ico">⚙️</span>Restaurant Settings <span class="qi-arrow">›</span></button>' +
       '<button class="quick-item" onclick="openOpeningHours()"><span class="qi-ico">🕒</span>Opening Hours <span class="qi-arrow">›</span></button>' +
-   '<button class="quick-item" onclick="openWhatsAppSettings()"><span class="qi-ico">💬</span>WhatsApp Settings <span class="qi-arrow">›</span></button>' +
-      '<button class="quick-item" onclick="openShareModal()"><span class="qi-ico">🔗</span>Share / QR Code <span class="qi-arrow">›</span></button>' +
+      '<button class="quick-item" onclick="openWhatsAppSettings()"><span class="qi-ico">💬</span>WhatsApp Settings <span class="qi-arrow">›</span></button>' +
       '<button class="quick-item" onclick="logoutVendor()"><span class="qi-ico">🚪</span>Logout <span class="qi-arrow">›</span></button>' +
-     '</div>';
+    '</div>';
   showScreen('vendor-dashboard');
+  loadOrdersForDashboard(r.id);
 }
 
+function loadOrdersForDashboard(restaurantId) {
+  SupaOrders.listForRestaurant(restaurantId, 30).then(function (orders) {
+    renderOrdersStats(orders);
+    renderRecentOrders(orders);
+  }).catch(function (err) {
+    console.warn('[Munch] Could not load orders:', err);
+    var s = document.getElementById('orders-stats');
+    if (s) s.innerHTML = '<div class="stat" style="flex:1 1 100%;"><div class="lbl">COULD NOT LOAD ORDERS</div></div>';
+  });
+}
+
+function renderOrdersStats(orders) {
+  var el = document.getElementById('orders-stats');
+  if (!el) return;
+  var now = new Date();
+  var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var weekStart = new Date(todayStart); weekStart.setDate(weekStart.getDate() - 7);
+  var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  var today = 0, week = 0, monthRevenue = 0;
+  orders.forEach(function (o) {
+    var t = new Date(o.created_at);
+    var amt = Number(o.grand_total) || 0;
+    if (t >= todayStart) today++;
+    if (t >= weekStart) week++;
+    if (t >= monthStart) monthRevenue += amt;
+  });
+  el.innerHTML =
+    '<div class="stat"><div class="num">' + today + '</div><div class="lbl">TODAY</div></div>' +
+    '<div class="stat"><div class="num">' + week + '</div><div class="lbl">THIS WEEK</div></div>' +
+    '<div class="stat"><div class="num">' + money(monthRevenue) + '</div><div class="lbl">THIS MONTH</div></div>';
+}
+
+function renderRecentOrders(orders) {
+  var el = document.getElementById('recent-orders');
+  if (!el) return;
+  if (!orders.length) {
+    el.innerHTML =
+      '<div class="empty-state" style="padding:22px 16px;background:#fff;border:1px dashed var(--border);border-radius:14px;">' +
+        '<div class="big">📋</div>' +
+        '<p style="font-size:.85rem;">No orders yet. They\'ll show up here when customers order.</p>' +
+      '</div>';
+    return;
+  }
+  var recent = orders.slice(0, 10);
+  el.innerHTML =
+    '<h3 style="font-size:14px;color:var(--teal);font-weight:800;margin:14px 0 10px;">Recent Orders</h3>' +
+    recent.map(function (o) {
+      var t = new Date(o.created_at);
+      var itemCount = Array.isArray(o.items) ? o.items.length : 0;
+      return '<div style="background:#fff;border:1px solid var(--border);border-radius:12px;' +
+        'padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;gap:12px;align-items:center;">' +
+        '<div style="min-width:0;flex:1;">' +
+          '<div style="font-weight:700;font-size:14px;color:var(--text);">' +
+            esc(o.customer_name || 'Customer') + '</div>' +
+          '<div style="font-size:12px;color:var(--muted);margin-top:2px;">' +
+            itemCount + ' item' + (itemCount === 1 ? '' : 's') + ' · ' + timeAgo(t) + '</div>' +
+        '</div>' +
+        '<div style="text-align:right;flex:none;">' +
+          '<div style="font-weight:800;color:var(--orange);font-size:14px;">' +
+            money(o.grand_total) + '</div>' +
+          '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' +
+            esc(o.order_option || 'Delivery') + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+}
+
+function timeAgo(date) {
+  var seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return 'just now';
+  var mins = Math.floor(seconds / 60);
+  if (mins < 60) return mins + ' min ago';
+  var hours = Math.floor(mins / 60);
+  if (hours < 24) return hours + ' hr' + (hours === 1 ? '' : 's') + ' ago';
+  var days = Math.floor(hours / 24);
+  if (days < 7) return days + ' day' + (days === 1 ? '' : 's') + ' ago';
+  return date.toLocaleDateString();
+}
 /* ============ Menu manager ============ */
 function openMenuManager() {
   var ctx = requireVendorScreen();
