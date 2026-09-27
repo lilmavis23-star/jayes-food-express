@@ -17,7 +17,23 @@
 
 <header>
     <button class="brand" onclick="openHome()" aria-label="Munch Express home">
-      <span class="logo">M</span>
+      
+    <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="munchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FB923C"/>
+              <stop offset="100%" stop-color="#EA580C"/>
+            </linearGradient>
+          </defs>
+          <rect width="40" height="40" rx="11" fill="url(#munchGrad)"/>
+          <path d="M10.5 27.5 L13 14 L20 23 L27 14 L29.5 27.5"
+                stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"
+                fill="none"/>
+          <circle cx="31.5" cy="29" r="2.4" fill="#0F766E"/>
+        </svg>
+      </span>
+    
       <span><span class="name">Munch Express</span><br><span class="tag">Good food. Delivered.</span></span>
     </button>
     <button class="cart-btn" onclick="openCart()" aria-label="Open cart">
