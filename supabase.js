@@ -282,3 +282,38 @@ var SupaRealtime = {
     }
   }
 };
+
+
+/* ---- Orders ---- */
+var SupaOrders = {
+  create: function (order) {
+    return sb.from('orders').insert({
+      restaurant_id: order.restaurantId,
+      restaurant_name: order.restaurantName,
+      customer_name: order.customerName,
+      customer_phone: order.customerPhone,
+      delivery_location: order.deliveryLocation,
+      order_option: order.orderOption,
+      instructions: order.instructions,
+      items: order.items,
+      food_total: order.foodTotal,
+      delivery_fee: order.deliveryFee,
+      grand_total: order.grandTotal,
+      status: 'submitted'
+    }).then(function (res) {
+      if (res.error) throw res.error;
+      return true;
+    });
+  },
+
+  listForRestaurant: function (restaurantId, limit) {
+    var q = sb.from('orders').select('*')
+      .eq('restaurant_id', restaurantId)
+      .order('created_at', { ascending: false });
+    if (limit) q = q.limit(limit);
+    return q.then(function (res) {
+      if (res.error) throw res.error;
+      return res.data || [];
+    });
+  }
+};
