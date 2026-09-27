@@ -29,9 +29,12 @@ header{
   padding:calc(12px + env(safe-area-inset-top)) 16px 12px;gap:10px;
 }
 .brand{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;text-align:left}
-.brand .logo{width:34px;height:34px;border-radius:11px;background:var(--orange);color:#fff;
-  display:grid;place-items:center;font-size:1.2rem;font-weight:900;letter-spacing:-0.5px;
-  flex:none;box-shadow:0 2px 6px rgba(249,115,22,.35)}
+.brand .logo{
+  width:34px;height:34px;flex:none;display:block;
+  border-radius:11px;
+  box-shadow:0 2px 8px rgba(249,115,22,.4);
+}
+.brand .logo svg{width:100%;height:100%;display:block}
 .brand .name{font-weight:800;color:var(--teal);font-size:1rem;line-height:1.15}
 .brand .tag{font-size:.68rem;color:var(--muted);font-weight:600}
 .cart-btn{position:relative;background:var(--orange);color:#fff;border:none;border-radius:999px;
