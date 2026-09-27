@@ -76,10 +76,33 @@ function handleVendorRegister(e) {
   })
     .then(function (data) {
       if (!data.session) {
-        /* Email confirmation is ON. The restaurant is created automatically
-           by a database trigger when the account is confirmed. */
-        toast('Almost there! Check your inbox for the confirmation link, then log in.');
-        setTimeout(function () { openVendorLogin(); }, 2400);
+        /* Email confirmation is ON */
+        showModal({
+          title: 'Check your inbox',
+          body:
+            '<p style="font-size:.9rem;color:var(--text);margin-bottom:10px;">' +
+              'We sent a confirmation link to <strong>' + esc(email) + '</strong>. ' +
+              'Tap the link in that email to activate your vendor account.' +
+            '</p>' +
+            '<p style="font-size:.82rem;color:var(--muted);margin:0;">' +
+              'Can\'t find it? Check your spam folder, or tap Resend below.' +
+            '</p>',
+          actions: [
+            { label: 'Resend Email', className: 'btn-teal', keepOpen: true, onClick: function () {
+                sb.auth.resend({ type: 'signup', email: email })
+                  .then(function (res) {
+                    if (res.error) throw res.error;
+                    toast('Confirmation email sent.');
+                  })
+                  .catch(function (err) {
+                    toast(err.message || 'Could not resend.');
+                  });
+              } },
+            { label: 'Go to Login', className: 'btn-orange', onClick: function () {
+                openVendorLogin();
+              } }
+          ]
+        });
         return null;
       }
       return refreshVendorContext().then(function () {
@@ -125,15 +148,36 @@ function handleVendorLogin(e) {
       toast('Welcome back!');
       showVendorDashboard();
     })
- .catch(function (err) {
+    .catch(function (err) {
       console.error('[Munch] Login failed:', err);
-      var msg = err.message || 'Invalid email or password.';
-      if (/email not confirmed/i.test(msg)) {
-        msg = 'Please confirm your email first — check your inbox.';
-      } else if (/invalid login credentials/i.test(msg)) {
-        msg = 'Incorrect email or password.';
+      var raw = err.message || 'Invalid email or password.';
+      if (/email not confirmed/i.test(raw)) {
+        showModal({
+          title: 'Email not confirmed',
+          body:
+            '<p style="font-size:.9rem;color:var(--text);margin-bottom:10px;">' +
+              'This account hasn\'t been confirmed yet. Check your inbox for the confirmation link from Munch Express.' +
+            '</p>' +
+            '<p style="font-size:.82rem;color:var(--muted);margin:0;">' +
+              'Can\'t find it? Check spam, or tap Resend below.' +
+            '</p>',
+          actions: [
+            { label: 'Resend Email', className: 'btn-teal', keepOpen: true, onClick: function () {
+                sb.auth.resend({ type: 'signup', email: email })
+                  .then(function (res) {
+                    if (res.error) throw res.error;
+                    toast('Confirmation email sent.');
+                  })
+                  .catch(function (e2) { toast(e2.message || 'Could not resend.'); });
+              } },
+            { label: 'Close', className: 'btn-outline' }
+          ]
+        });
+      } else if (/invalid login credentials/i.test(raw)) {
+        toast('Incorrect email or password.');
+      } else {
+        toast(raw);
       }
-      toast(msg);
     })
     .then(function () {
       if (btn) { btn.disabled = false; btn.textContent = 'Login'; }
@@ -141,16 +185,6 @@ function handleVendorLogin(e) {
 
   return false;
 }
-
-function logoutVendor() {
-  SupaAuth.signOut().then(function () {
-    currentVendorUser = null;
-    currentVendorRestaurant = null;
-    toast('Logged out.');
-    openVendorLogin();
-  });
-}
-
 
 /* ============ Resend confirmation email ============ */
 function openResendConfirm() {
