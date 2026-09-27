@@ -186,6 +186,19 @@ function handleVendorLogin(e) {
   return false;
 }
 
+function logoutVendor() {
+  SupaAuth.signOut().then(function () {
+    currentVendorUser = null;
+    currentVendorRestaurant = null;
+    toast('Logged out.');
+    openVendorLogin();
+  }).catch(function (err) {
+    console.warn('[Munch] Logout error:', err);
+    currentVendorUser = null;
+    currentVendorRestaurant = null;
+    openVendorLogin();
+  });
+}
 /* ============ Resend confirmation email ============ */
 function openResendConfirm() {
   showModal({
@@ -219,3 +232,5 @@ function openResendConfirm() {
     ]
   });
 }
+
+
