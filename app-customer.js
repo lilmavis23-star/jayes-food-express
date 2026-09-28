@@ -41,7 +41,7 @@ function addToCart(productId) {
   if (!found) c.items.push({ productId: p.id, qty: 1 });
   setCart(c);
   toast(p.name + ' added to cart');
-  if (state.currentRestaurantId) renderRestaurantPage();
+  if (state.currentRestaurantId === p.restaurantId) updateProductControl(p.id);
   var ov = document.getElementById('cart-overlay');
   if (ov && ov.classList.contains('open')) renderCart();
 }
@@ -58,7 +58,7 @@ function changeQty(productId, delta) {
   renderCart();
   var co = document.getElementById('checkout-overlay');
   if (co && co.classList.contains('open')) renderCheckout();
-  if (state.currentRestaurantId) renderRestaurantPage();
+  if (state.currentRestaurantId) updateProductControl(productId);
 }
 
 function removeFromCart(productId) {
@@ -252,7 +252,7 @@ function renderRestaurantPage() {
       } else {
         control = '<button class="add-btn" onclick="addToCart(\'' + esc(p.id) + '\')" aria-label="Add ' + esc(p.name) + '">+</button>';
       }
-      return '<div class="menu-item' + (p.available === false ? ' unavailable' : '') + '">' +
+      return '<div class="menu-item' + (p.available === false ? ' unavailable' : '') + '" data-product-id="' + esc(p.id) + '">' +
         imageHTML(p.image, 'rest-thumb') +
         '<div class="mi-info"><h4>' + esc(p.name) + '</h4>' +
           (p.description ? '<p class="desc">' + esc(p.description) + '</p>' : '') +
@@ -492,4 +492,33 @@ function overlayBackdropClick(e, overlayId) {
     if (overlayId === 'cart-overlay') closeCart();
     else if (overlayId === 'checkout-overlay') closeCheckout();
   }
+}
+
+/* Update only the quantity control for one product — no full page re-render,
+   so images don't flicker. */
+function updateProductControl(productId) {
+  var itemEl = document.querySelector('[data-product-id="' + productId + '"]');
+  if (!itemEl) return;
+  var p = getProduct(productId);
+  if (!p) return;
+  var r = getRestaurant(p.restaurantId);
+  if (!r) return;
+
+  var open = isRestaurantOpen(r);
+  var canOrder = open && p.available !== false;
+  var qty = cartQty(productId);
+  var control;
+
+  if (!canOrder) {
+    control = '<span class="unavail-tag">Unavailable</span>';
+  } else if (qty > 0) {
+    control = '<div class="stepper"><button onclick="changeQty(\'' + esc(p.id) + '\',-1)" aria-label="Decrease">−</button>' +
+              '<span class="qty">' + qty + '</span>' +
+              '<button onclick="addToCart(\'' + esc(p.id) + '\')" aria-label="Increase">+</button></div>';
+  } else {
+    control = '<button class="add-btn" onclick="addToCart(\'' + esc(p.id) + '\')" aria-label="Add ' + esc(p.name) + '">+</button>';
+  }
+
+  var rightEl = itemEl.querySelector('.mi-right');
+  if (rightEl) rightEl.innerHTML = control;
 }
