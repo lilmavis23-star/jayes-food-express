@@ -409,21 +409,25 @@ function submitCheckout() {
     return l.product.name + ' × ' + l.qty + ' — ' + money(l.line);
   }).join('\n');
 
-  var msg = 'Hello ' + r.name + ' 👋\n\n' +
-    'NEW ORDER\n\n' +
+  var msg = '🛵 *MUNCH EXPRESS* — New Order\n' +
+    '━━━━━━━━━━━━━━━━━\n\n' +
+    'Hello ' + r.name + ' 👋\n\n' +
+    '*ORDER DETAILS*\n' +
     lines + '\n\n' +
     'Food Total: ' + money(data.foodTotal) + '\n' +
     'Delivery: ' + money(data.deliveryFee) + '\n' +
     (data.disposableFee > 0 ? 'Disposable Pack: ' + money(data.disposableFee) + '\n' : '') +
-    'Total: ' + money(grand) + '\n\n' +
-    'CUSTOMER DETAILS\n\n' +
+    '*Total: ' + money(grand) + '*\n\n' +
+    '*CUSTOMER DETAILS*\n' +
     'Name: ' + name + '\n' +
     'Phone: ' + phone + '\n' +
     'Order Option: ' + state.checkoutOption + '\n' +
     (state.checkoutOption === 'Delivery' ? 'Location: ' + loc + '\n' : '') +
     (note ? 'Instructions: ' + note + '\n' : '') +
-    '\nPlease confirm my order.';
-
+    '\n━━━━━━━━━━━━━━━━━\n' +
+    '📱 Order placed via *Munch Express*\n' +
+    'munchxpress.netlify.app\n\n' +
+    'Please confirm my order.';
   
   var num = normalizeWhatsApp(r.whatsapp);
   if (!num) { toast('This restaurant has no WhatsApp number set.'); return; }
