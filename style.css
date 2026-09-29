@@ -29,18 +29,11 @@ header{
   padding:calc(12px + env(safe-area-inset-top)) 16px 12px;gap:10px;
 }
 .brand{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;text-align:left}
-.brand .logo {
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  display: block;
-  border-radius: 14px;
-  line-height: 0;
-  transition: transform .2s ease;
-}
-
-.brand:hover .logo {
-  transform: translateY(-1px);
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
 }
 
 .brand .logo svg {
