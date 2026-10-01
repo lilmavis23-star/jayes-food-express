@@ -200,7 +200,10 @@ var SupaAuth = {
     return sb.auth.signUp({
       email: email,
       password: password,
-      options: { data: meta || {} }
+      options: {
+        data: meta || {},
+        emailRedirectTo: 'https://munchxpress.com.ng'
+      }
     }).then(function (res) {
       if (res.error) throw res.error;
       return res.data;
