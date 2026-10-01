@@ -426,7 +426,7 @@ function submitCheckout() {
     (note ? 'Instructions: ' + note + '\n' : '') +
     '\n━━━━━━━━━━━━━━━━━\n' +
     '📱 Order placed via *Munch Express*\n' +
-    'munchxpress.netlify.app\n\n' +
+    'munchxpress.com.ng\n\n' +
     'Please confirm my order.';
   
   var num = normalizeWhatsApp(r.whatsapp);
