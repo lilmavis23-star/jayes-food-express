@@ -62,11 +62,20 @@ updateCartBadge();
   showScreen('customer-app');
 
   /* Deep-link: URL like ?r=RESTAURANT_ID opens that restaurant's menu */
-  try {
+try {
     var params = new URLSearchParams(window.location.search);
-    var deepLinkId = params.get('r');
-    if (deepLinkId && getRestaurant(deepLinkId)) {
-      openRestaurantPage(deepLinkId);
+    var deepLink = params.get('r');
+    if (deepLink) {
+      /* First try as UUID (backwards compatibility) */
+      var match = getRestaurant(deepLink);
+      if (match) {
+        openRestaurantPage(match.id);
+      } else {
+        /* Not a UUID in cache — try as slug via Supabase */
+        SupaData.getRestaurantBySlug(deepLink).then(function (r) {
+          if (r) openRestaurantPage(r.id);
+        }).catch(function () {});
+      }
     }
   } catch (e) {
     console.warn('[Munch] Deep link failed:', e);
