@@ -574,8 +574,7 @@ function openShareModal() {
   if (!ctx) return;
   var r = ctx.restaurant;
 
-  var baseUrl = window.location.origin + window.location.pathname;
-  var shareUrl = baseUrl + '?r=' + encodeURIComponent(r.slug || r.id);
+ var shareUrl = 'https://munchxpress.com.ng/?r=' + encodeURIComponent(r.slug || r.id);
 
   var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=' +
               encodeURIComponent(shareUrl);
