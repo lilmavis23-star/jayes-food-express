@@ -27,12 +27,20 @@ var SupaCache = {
   loaded:      false
 };
 
+function slugify(str) {
+  return String(str || 'restaurant')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'restaurant';
+}
+
 /* ---- Row mappers: DB (snake_case) <-> App (camelCase) ---- */
 function rFromDB(row) {
   return {
     id: row.id,
     ownerId: row.owner_id,
     name: row.name,
+    slug: row.slug || '',
     category: row.category || 'General',
     rating: row.rating != null ? Number(row.rating) : 5.0,
     description: row.description || '',
@@ -143,6 +151,7 @@ var SupaData = {
   createRestaurant: function (data, ownerId) {
     var payload = rToDB(data);
     payload.owner_id = ownerId;
+    payload.slug = slugify(data.name) + '-' + Math.random().toString(36).slice(2, 6);
     return sb.from('restaurants').insert(payload).select().single()
       .then(function (res) {
         if (res.error) throw res.error;
@@ -151,6 +160,14 @@ var SupaData = {
         return mapped;
       });
   },
+
+  getRestaurantBySlug: function (slug) {
+    return sb.from('restaurants').select('*').eq('slug', slug).maybeSingle()
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return res.data ? rFromDB(res.data) : null;
+      });
+  },},
 
   updateRestaurant: function (id, patch) {
     return sb.from('restaurants').update(rToDB(patch)).eq('id', id).select().single()
