@@ -8,24 +8,27 @@
      - SupaAuth      : auth helpers
      - SupaImages    : storage upload/remove
      - SupaRealtime  : realtime subscription
+     - SupaOrders    : order logging + list
    ===================================================================== */
 
 /* ---- CREDENTIALS ---- */
 var SUPABASE_URL  = 'https://wdbwjloupkucxpdmounh.supabase.co';
 var SUPABASE_ANON = 'sb_publishable_UbNd45Z3sw3OnjEIvaLXlA_cwblbZJC';
-/* ------------------------------------------------------- */
+/* --------------------- */
 
 if (!window.supabase || !window.supabase.createClient) {
   console.error('[Munch] Supabase JS not loaded. Check the CDN script tag.');
 }
 var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
+/* ---- Slug helper ---- */
 function slugify(str) {
   return String(str || 'restaurant')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '') || 'restaurant';
 }
+
 /* ---- In-memory cache ---- */
 var SupaCache = {
   restaurants: [],
@@ -33,7 +36,7 @@ var SupaCache = {
   loaded:      false
 };
 
-/* ---- Row mappers: DB (snake_case) <-> App (camelCase) ---- */
+/* ---- Row mappers ---- */
 function rFromDB(row) {
   return {
     id: row.id,
@@ -57,20 +60,21 @@ function rFromDB(row) {
 }
 function rToDB(r) {
   var out = {};
-  if (r.name         !== undefined) out.name          = r.name;
-  if (r.category     !== undefined) out.category      = r.category;
-  if (r.rating       !== undefined) out.rating        = r.rating;
-  if (r.description  !== undefined) out.description   = r.description;
-  if (r.image        !== undefined) out.image_url     = r.image;
-  if (r.active       !== undefined) out.active        = r.active;
-  if (r.openingTime  !== undefined) out.opening_time  = r.openingTime;
-  if (r.closingTime  !== undefined) out.closing_time  = r.closingTime;
-  if (r.whatsapp     !== undefined) out.whatsapp      = r.whatsapp;
-  if (r.phone        !== undefined) out.phone         = r.phone;
-  if (r.address      !== undefined) out.address       = r.address;
-  if (r.deliveryFee  !== undefined) out.delivery_fee  = r.deliveryFee;
+  if (r.name          !== undefined) out.name           = r.name;
+  if (r.slug          !== undefined) out.slug           = r.slug;
+  if (r.category      !== undefined) out.category       = r.category;
+  if (r.rating        !== undefined) out.rating         = r.rating;
+  if (r.description   !== undefined) out.description    = r.description;
+  if (r.image         !== undefined) out.image_url      = r.image;
+  if (r.active        !== undefined) out.active         = r.active;
+  if (r.openingTime   !== undefined) out.opening_time   = r.openingTime;
+  if (r.closingTime   !== undefined) out.closing_time   = r.closingTime;
+  if (r.whatsapp      !== undefined) out.whatsapp       = r.whatsapp;
+  if (r.phone         !== undefined) out.phone          = r.phone;
+  if (r.address       !== undefined) out.address        = r.address;
+  if (r.deliveryFee   !== undefined) out.delivery_fee   = r.deliveryFee;
   if (r.disposableFee !== undefined) out.disposable_fee = r.disposableFee;
-  if (r.deliveryTime !== undefined) out.delivery_time = r.deliveryTime;
+  if (r.deliveryTime  !== undefined) out.delivery_time  = r.deliveryTime;
   return out;
 }
 function pFromDB(row) {
@@ -140,6 +144,12 @@ var SupaData = {
     }
     return null;
   },
+  getRestaurantBySlug: function (slug) {
+    for (var i = 0; i < SupaCache.restaurants.length; i++) {
+      if (SupaCache.restaurants[i].slug === slug) return SupaCache.restaurants[i];
+    }
+    return null;
+  },
   getProduct: function (id) {
     for (var i = 0; i < SupaCache.products.length; i++) {
       if (SupaCache.products[i].id === id) return SupaCache.products[i];
@@ -159,14 +169,6 @@ var SupaData = {
         return mapped;
       });
   },
-
-  getRestaurantBySlug: function (slug) {
-    return sb.from('restaurants').select('*').eq('slug', slug).maybeSingle()
-      .then(function (res) {
-        if (res.error) throw res.error;
-        return res.data ? rFromDB(res.data) : null;
-      });
-  },},
 
   updateRestaurant: function (id, patch) {
     return sb.from('restaurants').update(rToDB(patch)).eq('id', id).select().single()
@@ -301,7 +303,6 @@ var SupaRealtime = {
     }
   }
 };
-
 
 /* ---- Orders ---- */
 var SupaOrders = {
