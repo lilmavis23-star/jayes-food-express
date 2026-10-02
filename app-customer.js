@@ -218,7 +218,7 @@ function openRestaurantPage(id) {
   showScreen('restaurant-page');
   try {
     var url = new URL(window.location.href);
-    url.searchParams.set('r', id);
+    url.searchParams.set('r', r.slug || id);
     window.history.replaceState({}, '', url.toString());
   } catch (e) {}
 }
