@@ -20,19 +20,18 @@ if (!window.supabase || !window.supabase.createClient) {
 }
 var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-/* ---- In-memory cache ---- */
-var SupaCache = {
-  restaurants: [],
-  products:    [],
-  loaded:      false
-};
-
 function slugify(str) {
   return String(str || 'restaurant')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '') || 'restaurant';
 }
+/* ---- In-memory cache ---- */
+var SupaCache = {
+  restaurants: [],
+  products:    [],
+  loaded:      false
+};
 
 /* ---- Row mappers: DB (snake_case) <-> App (camelCase) ---- */
 function rFromDB(row) {
