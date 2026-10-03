@@ -207,3 +207,17 @@ function showScreen(name) {
   if (activeNav) { var el = document.getElementById(activeNav); if (el) el.classList.add('active'); }
   window.scrollTo(0, 0);
 }
+
+/* ============ Status pill / icons ============ */
+function statusPill(open) {
+  var icon = open
+    ? '<svg class="pill-ico" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="currentColor" opacity="0.18"/><path d="M4.75 8.25l2 2 4.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'
+    : '<svg class="pill-ico" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="currentColor" opacity="0.15"/><path d="M5.5 5.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+  return '<span class="pill ' + (open ? 'pill-open' : 'pill-closed') + '">' + icon + (open ? 'Open' : 'Closed') + '</span>';
+}
+
+function statusIconLarge(open) {
+  return open
+    ? '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#3E8B5F"/><path d="M4.75 8.25l2 2 4.5-4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'
+    : '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#B85A5A"/><path d="M5.5 5.5l5 5m0-5l-5 5" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+}
