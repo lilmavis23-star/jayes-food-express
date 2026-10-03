@@ -41,7 +41,7 @@ function addToCart(productId) {
   if (!found) c.items.push({ productId: p.id, qty: 1 });
   setCart(c);
   toast(p.name + ' added to cart');
-  if (state.currentRestaurantId === p.restaurantId) updateProductControl(p.id);
+  if (state.currentRestaurantId === p.restaurantId) updateProductControl =(p.id);
   var ov = document.getElementById('cart-overlay');
   if (ov && ov.classList.contains('open')) renderCart();
 }
@@ -85,7 +85,7 @@ function clearCartWithConfirm() {
 
 function cartLines() {
   var c = getCart();
-  if (!c) return { cart: null, lines: [], foodTotal: 0, restaurant: null, deliveryFee: 0, deliveryFee: 0 };
+  if (!c) return { cart: null, lines: [], foodTotal: 0, restaurant: null, deliveryFee: 0, disposableFee: 0 };
   var r = getRestaurant(c.restaurantId);
   var lines = [], foodTotal = 0;
   c.items.forEach(function (it) {
@@ -126,12 +126,11 @@ function renderRestaurantList() {
   var el = document.getElementById('restaurant-list');
   if (!el) return;
 
-  /* Still loading — keep skeletons visible */
   if (!state.dataLoaded) {
     if (state.dataLoadFailed) {
       el.innerHTML =
         '<div class="empty-state">' +
-          '<div class="big">📡</div>' +
+          '<div class="big">\ud83d\udce1</div>' +
           '<p>Could not load restaurants.</p>' +
           '<p class="mt8" style="font-size:.82rem;">Check your connection and refresh.</p>' +
         '</div>';
@@ -160,7 +159,7 @@ function renderRestaurantList() {
   if (!allRestaurants.length) {
     el.innerHTML =
       '<div class="empty-state">' +
-        '<div class="big">🏪</div>' +
+        '<div class="big">\ud83c\udfea</div>' +
         '<p>No restaurants yet.</p>' +
         '<p class="mt8" style="font-size:.82rem;">Are you a restaurant owner? Tap <strong>Vendor</strong> below to register and start receiving orders.</p>' +
       '</div>';
@@ -186,7 +185,7 @@ function renderRestaurantList() {
   if (!list.length) {
     el.innerHTML =
       '<div class="empty-state">' +
-        '<div class="big">🔍</div>' +
+        '<div class="big">\ud83d\udd0d</div>' +
         '<p>No restaurants match your search.</p>' +
         '<p class="mt8" style="font-size:.82rem;">Try a different category or clear the search.</p>' +
       '</div>';
@@ -198,14 +197,14 @@ function renderRestaurantList() {
     return '<article class="rest-card' + (open ? '' : ' closed') + '">' +
       '<div class="rest-card-top">' + imageHTML(r.image, 'rest-thumb') +
         '<div class="rest-info"><h3>' + esc(r.name) + '</h3>' +
-          '<p class="muted"><span class="star">★</span> ' + toNum(r.rating).toFixed(1) + ' · ' + esc(r.category) + '</p>' +
-          '<p class="muted">🕒 ' + esc(r.deliveryTime || '30–45 min') + ' · Delivery ' + money(r.deliveryFee) + '</p>' +
-          '<span class="pill ' + (open ? 'pill-open' : 'pill-closed') + '">' + (open ? '🟢 Open' : '🔴 Closed') + '</span>' +
+          '<p class="muted"><span class="star">\u2605</span> ' + toNum(r.rating).toFixed(1) + ' \u00b7 ' + esc(r.category) + '</p>' +
+          '<p class="muted">\ud83d\udd52 ' + esc(r.deliveryTime || '30\u201345 min') + ' \u00b7 Delivery ' + money(r.deliveryFee) + '</p>' +
+          statusPill(open) +
         '</div>' +
       '</div>' +
       (open
         ? '<button class="btn btn-orange btn-block" onclick="openRestaurantPage(\'' + esc(r.id) + '\')">View Menu</button>'
-        : '<button class="btn btn-disabled btn-block" disabled>🔴 Closed — unavailable</button>') +
+        : '<button class="btn btn-disabled btn-block" disabled>Closed \u2014 unavailable</button>') +
     '</article>';
   }).join('');
 }
@@ -237,9 +236,9 @@ function handleSearchInput(val) {
 }
 
 function openRestaurantPage(id) {
-  var r = getRestaurant(id);
-  if (!r) { toast('Restaurant not found.'); return; }
-  if (!isRestaurantOpen(r)) { toast(r.name + ' is currently closed.'); return; }
+  var r = getRestaurant '<(id);
+  if (!r) {div toast('Restaurant not found.'); return; }
+ class  if (!isRestaurantOpen(r)) {=" toast(r.name + ' is currentlyste closed.'); return; }
   state.currentRestaurantId = id;
   renderRestaurantPage();
   showScreen('restaurant-page');
@@ -273,7 +272,7 @@ function renderRestaurantPage() {
       if (!canOrder) {
         control = '<span class="unavail-tag">Unavailable</span>';
       } else if (qty > 0) {
-        control = '<div class="stepper"><button onclick="changeQty(\'' + esc(p.id) + '\',-1)" aria-label="Decrease">−</button>' +
+        controlpper"><button onclick="changeQty(\'' + esc(p.id) + '\',-1)" aria-label="Decrease">\u2212</button>' +
                   '<span class="qty">' + qty + '</span>' +
                   '<button onclick="addToCart(\'' + esc(p.id) + '\')" aria-label="Increase">+</button></div>';
       } else {
@@ -287,24 +286,24 @@ function renderRestaurantPage() {
         '<div class="mi-right">' + control + '</div>' +
       '</div>';
     }).join('') + '</div>';
-  }).join('') : '<div class="empty-state"><div class="big">🍽️</div><p>Menu coming soon.</p></div>';
+  }).join('') : '<div class="empty-state"><div class="big">\ud83c\udf7d\ufe0f</div><p>Menu coming soon.</p></div>';
 
   el.innerHTML =
     '<div class="rest-hero">' +
-      '<button class="back-btn" onclick="openHome()">← Restaurants</button>' +
+      '<button class="back-btn" onclick="openHome()">\u2190 Restaurants</button>' +
       '<div class="rest-hero-main">' + imageHTML(r.image, 'rest-thumb') +
         '<div><h2>' + esc(r.name) + '</h2>' +
-          '<p class="muted"><span class="star">★</span> ' + toNum(r.rating).toFixed(1) + ' · ' + esc(r.category) + '</p>' +
-          '<p class="muted">🕒 ' + esc(r.deliveryTime || '30–45 min') + ' · Delivery ' + money(r.deliveryFee) + '</p>' +
-          '<span class="pill ' + (open ? 'pill-open' : 'pill-closed') + '">' + (open ? 'statusPill(open) + ' : 'statusPill(closed) + '</span>' +
+          '<p class="muted"><span class="star">\u2605</span> ' + toNum(r.rating).toFixed(1) + ' \u00b7 ' + esc(r.category) + '</p>' +
+          '<p class="muted">\ud83d\udd52 ' + esc(r.deliveryTime || '30\u201345 min') + ' \u00b7 Delivery ' + money(r.deliveryFee) + '</p>' +
+          statusPill(open) +
         '</div>' +
       '</div>' +
-      (r.description ? '<p class="desc">“' + esc(r.description) + '”</p>' : '') +
+      (r.description ? '<p class="desc">\u201c' + esc(r.description) + '\u201d</p>' : '') +
       (open ? '' : '<div class="closed-banner">This restaurant is closed and cannot take orders right now.</div>') +
     '</div>' +
     menuHTML +
     '<div style="padding:10px 16px">' +
-      '<button class="btn btn-teal btn-block" onclick="openCart()">View Cart 🛒</button>' +
+      '<button class="btn btn-teal btn-block" onclick="openCart()">View Cart \ud83d\uded2</button>' +
     '</div>';
 }
 
@@ -323,7 +322,7 @@ function renderCart() {
   if (!el) return;
   var data = cartLines();
   if (!data.cart || !data.lines.length) {
-    el.innerHTML = '<div class="empty-state"><div class="big">🛒</div><p>Your cart is empty.</p>' +
+    el.innerHTML = '<div class="empty-state"><div class="big">\ud83d\uded2</div><p>Your cart is empty.</p>' +
       '<p class="mt8"><button class="btn btn-orange" onclick="closeCart();openRestaurantList()">Browse Restaurants</button></p></div>';
     return;
   }
@@ -332,7 +331,7 @@ function renderCart() {
     return '<div class="cart-line">' +
       '<div class="cl-info"><h4>' + esc(l.product.name) + '</h4>' +
         '<p class="unit">' + money(l.price) + ' each</p></div>' +
-      '<div class="stepper"><button onclick="changeQty(\'' + esc(l.product.id) + '\',-1)">−</button>' +
+      '<div class="stepper"><button onclick="changeQty(\'' + esc(l.product.id) + '\',-1)">\u2212</button>' +
         '<span class="qty">' + l.qty + '</span>' +
         '<button onclick="changeQty(\'' + esc(l.product.id) + '\',1)">+</button></div>' +
       '<div class="cl-side"><span class="lt">' + money(l.line) + '</span>' +
@@ -343,7 +342,7 @@ function renderCart() {
   el.innerHTML =
     '<p class="cart-rest">Ordering from <strong>' + esc(r ? r.name : 'Restaurant') + '</strong></p>' +
     linesHTML +
-   '<div class="totals">' +
+    '<div class="totals">' +
       '<div class="row"><span>Food Total</span><span>' + money(data.foodTotal) + '</span></div>' +
       '<div class="row"><span>Delivery Fee</span><span>' + money(data.deliveryFee) + '</span></div>' +
       (data.disposableFee > 0
@@ -353,7 +352,7 @@ function renderCart() {
     '</div>' +
     '<div class="btn-row">' +
       '<button class="btn btn-outline" onclick="clearCartWithConfirm()">Clear</button>' +
-      '<button class="btn btn-orange" onclick="openCheckout()">Checkout →</button>' +
+      '<button class="btn btn-orange" onclick="openCheckout()">Checkout \u2192</button>' +
     '</div>' +
     '<p class="mt14" style="text-align:center"><button class="btn-ghost" onclick="closeCart()">Continue shopping</button></p>';
 }
@@ -382,16 +381,16 @@ function renderCheckout() {
   var data = cartLines();
   if (!data.cart || !data.lines.length) { closeCheckout(); openCart(); return; }
   var r = data.restaurant;
-  var grand = data.foodTotal + data.deliveryFee;
+  var grand = data.foodTotal + data.deliveryFee + data.disposableFee;
   var isDel = state.checkoutOption === 'Delivery';
 
   el.innerHTML =
-    '<div class="form-card"><h3>ORDER SUMMARY — ' + esc(r ? r.name : '') + '</h3>' +
+    '<div class="form-card"><h3>ORDER SUMMARY \u2014 ' + esc(r ? r.name : '') + '</h3>' +
       data.lines.map(function (l) {
-        return '<div class="row-between"><span class="rt">' + esc(l.product.name) + ' × ' + l.qty + '</span>' +
+        return '<div class="row-between"><span class="rt">' + esc(l.product.name) + ' \u00d7 ' + l.qty + '</span>' +
                '<span class="rt">' + money(l.line) + '</span></div>';
       }).join('') +
-  '<div class="row-between mt8"><span class="rs">Food Total</span><span class="rt">' + money(data.foodTotal) + '</span></div>' +
+      '<div class="row-between mt8"><span class="rs">Food Total</span><span class="rt">' + money(data.foodTotal) + '</span></div>' +
       '<div class="row-between"><span class="rs">Delivery</span><span class="rt">' + money(data.deliveryFee) + '</span></div>' +
       (data.disposableFee > 0
         ? '<div class="row-between"><span class="rs">Disposable Pack</span><span class="rt">' + money(data.disposableFee) + '</span></div>'
@@ -403,16 +402,16 @@ function renderCheckout() {
       '<div class="field"><label for="co-phone">Phone number *</label><input id="co-phone" type="tel" placeholder="080XXXXXXXX"></div>' +
       '<div class="field"><label>Order option</label>' +
         '<div class="radio-row">' +
-          '<label class="radio-card' + (isDel ? ' sel' : '') + '"><input type="radio" name="co-opt" ' + (isDel ? 'checked' : '') + ' onchange="setCheckoutOption(\'Delivery\')">🛵 Delivery</label>' +
-          '<label class="radio-card' + (!isDel ? ' sel' : '') + '"><input type="radio" name="co-opt" ' + (!isDel ? 'checked' : '') + ' onchange="setCheckoutOption(\'Pickup\')">🛍️ Pickup</label>' +
+          '<label class="radio-card' + (isDel ? ' sel' : '') + '"><input type="radio" name="co-opt" ' + (isDel ? 'checked' : '') + ' onchange="setCheckoutOption(\'Delivery\')">Delivery</label>' +
+          '<label class="radio-card' + (!isDel ? ' sel' : '') + '"><input type="radio" name="co-opt" ' + (!isDel ? 'checked' : '') + ' onchange="setCheckoutOption(\'Pickup\')">Pickup</label>' +
         '</div></div>' +
       '<div class="field"><label for="co-loc">Delivery location' + (isDel ? ' *' : '') + '</label>' +
         '<input id="co-loc" placeholder="e.g. Ijebu Ode, Mobalufon"></div>' +
       '<div class="field"><label for="co-note">Order note / instructions</label>' +
-        '<textarea id="co-note" rows="2" placeholder="Optional — e.g. Please call when nearby"></textarea></div>' +
+        '<textarea id="co-note" rows="2" placeholder="Optional \u2014 e.g. Please call when nearby"></textarea></div>' +
     '</div>' +
     '<button class="btn btn-orange btn-block" onclick="submitCheckout()">Continue to WhatsApp</button>' +
-    '<p class="mt8" style="text-align:center"><button class="btn-ghost" onclick="closeCheckout();openCart()">← Back to cart</button></p>';
+    '<p class="mt8" style="text-align:center"><button class="btn-ghost" onclick="closeCheckout();openCart()">\u2190 Back to cart</button></p>';
 }
 function submitCheckout() {
   var data = cartLines();
@@ -433,12 +432,12 @@ function submitCheckout() {
 
   var grand = data.foodTotal + data.deliveryFee + data.disposableFee;
   var lines = data.lines.map(function (l) {
-    return l.product.name + ' × ' + l.qty + ' — ' + money(l.line);
+    return l.product.name + ' \u00d7 ' + l.qty + ' \u2014 ' + money(l.line);
   }).join('\n');
 
-  var msg = '🛵 *MUNCH EXPRESS* — New Order\n' +
-    '━━━━━━━━━━━━━━━━━\n\n' +
-    'Hello ' + r.name + ' 👋\n\n' +
+  var msg = '\ud83d\udef5 *MUNCH EXPRESS* \u2014 New Order\n' +
+    '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n' +
+    'Hello ' + r.name + ' \ud83d\udc4b\n\n' +
     '*ORDER DETAILS*\n' +
     lines + '\n\n' +
     'Food Total: ' + money(data.foodTotal) + '\n' +
@@ -451,16 +450,14 @@ function submitCheckout() {
     'Order Option: ' + state.checkoutOption + '\n' +
     (state.checkoutOption === 'Delivery' ? 'Location: ' + loc + '\n' : '') +
     (note ? 'Instructions: ' + note + '\n' : '') +
-    '\n━━━━━━━━━━━━━━━━━\n' +
-    '📱 Order placed via *Munch Express*\n' +
+    '\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n' +
+    '\ud83d\udcf1 Order placed via *Munch Express*\n' +
     'munchxpress.com.ng\n\n' +
     'Please confirm my order.';
-  
+
   var num = normalizeWhatsApp(r.whatsapp);
   if (!num) { toast('This restaurant has no WhatsApp number set.'); return; }
 
-  /* Log the order before opening WhatsApp. Fire-and-forget: even if the
-     log fails, WhatsApp still opens so the customer never loses their order. */
   try {
     SupaOrders.create({
       restaurantId: r.id,
@@ -485,13 +482,12 @@ function submitCheckout() {
 
   window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(msg), '_blank');
 
-  /* Order handed off to WhatsApp — clear the cart and reset the UI */
   setCart(null);
   closeCheckout();
   closeCart();
   renderRestaurantList();
   showScreen('customer-app');
-  toast('Order sent 🎉');
+  toast('Order sent \ud83c\udf89');
 }
 
 /* ============ Modal ============ */
@@ -525,8 +521,7 @@ function overlayBackdropClick(e, overlayId) {
   }
 }
 
-/* Update only the quantity control for one product — no full page re-render,
-   so images don't flicker. */
+/* Update only the quantity control for one product \u2014 no full page re-render. */
 function updateProductControl(productId) {
   var itemEl = document.querySelector('[data-product-id="' + productId + '"]');
   if (!itemEl) return;
@@ -543,7 +538,7 @@ function updateProductControl(productId) {
   if (!canOrder) {
     control = '<span class="unavail-tag">Unavailable</span>';
   } else if (qty > 0) {
-    control = '<div class="stepper"><button onclick="changeQty(\'' + esc(p.id) + '\',-1)" aria-label="Decrease">−</button>' +
+    control = '<div class="stepper"><button onclick="changeQty(\'' + esc(p.id) + '\',-1)" aria-label="Decrease">\u2212</button>' +
               '<span class="qty">' + qty + '</span>' +
               '<button onclick="addToCart(\'' + esc(p.id) + '\')" aria-label="Increase">+</button></div>';
   } else {
