@@ -1,10 +1,52 @@
 'use strict';
 /* =====================================================================
-   Jaye's Food Express — core helpers, cart storage, screen manager.
+   Munch Express — core helpers, cart storage, screen manager.
    Loaded FIRST. All other app-*.js files depend on this.
 ===================================================================== */
 
 var CART_KEY = 'jayes_cart';
+
+/* ============ Categories ============ */
+var STORE_CATEGORIES = [
+  'Nigerian Food',
+  'Fast Food',
+  'Pastries & Cakes',
+  'Drinks',
+  'Groceries & Foodstuffs',
+  'Other'
+];
+
+var FOOD_CATEGORIES = [
+  'Rice & Meals',
+  'Chicken',
+  'Beef',
+  'Turkey',
+  'Noodles',
+  'Pastries',
+  'Cakes',
+  'Snacks',
+  'Sides',
+  'Drinks',
+  'Groceries',
+  'Other'
+];
+
+function categorySelect(id, current, list, placeholder) {
+  var opts = '';
+  var found = false;
+  list.forEach(function (c) {
+    var sel = (c === current) ? ' selected' : '';
+    if (c === current) found = true;
+    opts += '<option value="' + esc(c) + '"' + sel + '>' + esc(c) + '</option>';
+  });
+  if (current && !found) {
+    opts = '<option value="' + esc(current) + '" selected>' + esc(current) + ' (current)</option>' + opts;
+  }
+  return '<select id="' + id + '">' +
+    '<option value="">' + esc(placeholder || '— Select —') + '</option>' +
+    opts +
+    '</select>';
+}
 
 var IMG_TARGETS = {
   restaurant: { maxDim: 1000, quality: 0.82 },
@@ -32,7 +74,7 @@ function esc(s) {
 function money(n) {
   n = Number(n);
   if (!isFinite(n) || n < 0) n = 0;
-  return '₦' + Math.round(n).toLocaleString('en-NG');
+  return '\u20a6' + Math.round(n).toLocaleString('en-NG');
 }
 function toNum(n, dflt) {
   n = Number(n);
@@ -45,10 +87,10 @@ function isImageSrc(v) {
 }
 function imageHTML(img, cls) {
   cls = cls || '';
-  if (!img) img = '🍽️';
+  if (!img) img = '\ud83c\udf7d\ufe0f';
   if (isImageSrc(img)) {
     return '<span class="imgwrap ' + cls + '"><img src="' + esc(img) + '" alt="" loading="lazy" ' +
-      'onerror="this.style.display=\'none\';this.parentNode.classList.add(\'emoji-thumb\');this.parentNode.textContent=\'🍽️\';">' +
+      'onerror="this.style.display=\'none\';this.parentNode.classList.add(\'emoji-thumb\');this.parentNode.textContent=\'\ud83c\udf7d\ufe0f\';">' +
       '</span>';
   }
   return '<span class="emoji-thumb ' + cls + '">' + esc(img) + '</span>';
@@ -77,7 +119,7 @@ function markInvalid(id, bad) {
   return !bad;
 }
 
-/* ============ Cart storage (localStorage) ============ */
+/* ============ Cart storage ============ */
 function cartLoad() {
   try {
     var raw = localStorage.getItem(CART_KEY);
@@ -120,7 +162,7 @@ function updateCartBadge() {
   });
 }
 
-/* ============ Data access (via Supabase cache) ============ */
+/* ============ Data access ============ */
 function getRestaurants()   { return SupaData.getRestaurants(); }
 function getProducts()      { return SupaData.getProducts(); }
 function getProductsFor(id) { return SupaData.getProductsFor(id); }
@@ -141,6 +183,22 @@ function isRestaurantOpen(r) {
   var nowM = now.getHours() * 60 + now.getMinutes();
   if (close <= open) return nowM >= open || nowM < close;
   return nowM >= open && nowM < close;
+}
+
+/* ============ Status pill / icons ============ */
+function statusPill(open) {
+  var iconOpen = '<svg class="pill-ico" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="currentColor" opacity="0.18"/><path d="M4.75 8.25l2 2 4.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+  var iconClosed = '<svg class="pill-ico" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="currentColor" opacity="0.15"/><path d="M5.5 5.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+  return '<span class="pill ' + (open ? 'pill-open' : 'pill-closed') + '">' +
+    (open ? iconOpen : iconClosed) +
+    (open ? 'Open' : 'Closed') +
+    '</span>';
+}
+
+function statusIconLarge(open) {
+  return open
+    ? '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#3E8B5F"/><path d="M4.75 8.25l2 2 4.5-4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'
+    : '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#B85A5A"/><path d="M5.5 5.5l5 5m0-5l-5 5" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
 }
 
 /* ============ Image compression ============ */
@@ -206,18 +264,4 @@ function showScreen(name) {
   var activeNav = { 'customer-app': 'nav-home', 'restaurant-page': 'nav-rest' }[name];
   if (activeNav) { var el = document.getElementById(activeNav); if (el) el.classList.add('active'); }
   window.scrollTo(0, 0);
-}
-
-/* ============ Status pill / icons ============ */
-function statusPill(open) {
-  var icon = open
-    ? '<svg class="pill-ico" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="currentColor" opacity="0.18"/><path d="M4.75 8.25l2 2 4.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'
-    : '<svg class="pill-ico" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="currentColor" opacity="0.15"/><path d="M5.5 5.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
-  return '<span class="pill ' + (open ? 'pill-open' : 'pill-closed') + '">' + icon + (open ? 'Open' : 'Closed') + '</span>';
-}
-
-function statusIconLarge(open) {
-  return open
-    ? '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#3E8B5F"/><path d="M4.75 8.25l2 2 4.5-4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'
-    : '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#B85A5A"/><path d="M5.5 5.5l5 5m0-5l-5 5" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
 }
