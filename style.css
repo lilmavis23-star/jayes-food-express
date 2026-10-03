@@ -418,3 +418,11 @@ footer .f-copy{font-size:.72rem;color:#9CA3AF}
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+.stat .num .stat-ico {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+}
+.stat .num .stat-ico svg { width: 100%; height: 100%; display: block; }
