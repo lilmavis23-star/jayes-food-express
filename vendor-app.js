@@ -64,7 +64,7 @@ function showVendorDashboard() {
       '<p>Welcome back, ' + esc(ctx.user.email || '') + ' 👋</p>' +
     '</div>' +
     '<div class="stat-row">' +
-      '<div class="stat"><div class="num">' + (open ? '🟢' : '🔴') + '</div><div class="lbl">' + (open ? 'OPEN' : 'CLOSED') + '</div></div>' +
+    '<div class="stat"><div class="num"><span class="stat-ico">' + statusIconLarge(open) + '</span></div><div class="lbl">' + (open ? 'OPEN' : 'CLOSED') + '</div></div>' +
       '<div class="stat"><div class="num">' + count + '</div><div class="lbl">FOODS</div></div>' +
       '<div class="stat"><div class="num">' + avail + '</div><div class="lbl">AVAILABLE</div></div>' +
     '</div>' +
