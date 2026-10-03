@@ -46,8 +46,10 @@ function currentScreenIsDashboard() {
 async function init() {
   try {
     await SupaData.loadAll();
+    state.dataLoaded = true;
   } catch (err) {
-    console.error('[Jaye] Initial load failed:', err);
+    console.error('[Munch] Initial load failed:', err);
+    state.dataLoadFailed = true;
     toast('Could not load data. Check your connection.');
   }
 
