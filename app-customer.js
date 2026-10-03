@@ -296,7 +296,7 @@ function renderRestaurantPage() {
         '<div><h2>' + esc(r.name) + '</h2>' +
           '<p class="muted"><span class="star">★</span> ' + toNum(r.rating).toFixed(1) + ' · ' + esc(r.category) + '</p>' +
           '<p class="muted">🕒 ' + esc(r.deliveryTime || '30–45 min') + ' · Delivery ' + money(r.deliveryFee) + '</p>' +
-          '<span class="pill ' + (open ? 'pill-open' : 'pill-closed') + '">' + (open ? '🟢 Open' : '🔴 Closed') + '</span>' +
+          '<span class="pill ' + (open ? 'pill-open' : 'pill-closed') + '">' + (open ? 'statusPill(open) + ' : 'statusPill(closed) + '</span>' +
         '</div>' +
       '</div>' +
       (r.description ? '<p class="desc">“' + esc(r.description) + '”</p>' : '') +
