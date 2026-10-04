@@ -131,7 +131,7 @@ function renderRecentOrders(orders) {
       '</div>';
     return;
   }
-  var recent = orders.slice(0, 10);
+  var recent = orders.slice(0, 3);
   el.innerHTML =
     '<h3 style="font-size:14px;color:var(--teal);font-weight:800;margin:14px 0 10px;">Recent Orders</h3>' +
     recent.map(function (o) {
