@@ -47,7 +47,10 @@
         <div class="loc">📍 Ijebu Ode</div>
         <h1>Great food.<br><span class="hl"> Local Restaurants.</span></h1>
         <p>Browse local restaurants, place an order and get it delivered to your doorstep. Fast &  Easy</p>
-        <button class="btn btn-orange" onclick="scrollToRestaurants()">Browse Restaurants ↓</button>
+       <button class="btn btn-orange" onclick="scrollToRestaurants()">Browse Restaurants ↓</button>
+      </div>
+      <div style="padding:14px 16px 0;text-align:center;">
+        <button onclick="openTrackOrder()" style="background:transparent;border:none;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Already ordered? Track your order →</button>
       </div>
      <div class="section" id="restaurant-section">
         <h2 class="section-title">Restaurants</h2>
@@ -92,7 +95,8 @@
 
     <!-- ============ RESTAURANT PAGE ============ -->
     <section id="screen-restaurant-page" class="screen"></section>
-
+    
+    <section id="screen-track-order" class="screen"></section>
     <!-- ============ VENDOR LOGIN ============ -->
     <section id="screen-vendor-login" class="screen">
       <div class="auth-wrap">
@@ -229,6 +233,7 @@
 <script src="supabase.js"></script>
 <script src="app-core.js"></script>
 <script src="app-customer.js"></script>
+<script src="app-track.js"></script>
 <script src="app-checkout.js"></script>
 <script src="app-auth.js"></script>
 <script src="vendor-app.js"></script>
