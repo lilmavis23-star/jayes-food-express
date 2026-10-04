@@ -405,8 +405,18 @@ function openRestaurantSettings() {
           '<p class="hint">Flat fee added to every order for takeaway packs. Set 0 if you don\'t charge.</p></div>' +
         '<div class="field"><label for="rs-time">Estimated delivery time</label>' +
           '<input id="rs-time" value="' + esc(r.deliveryTime) + '"></div>' +
-        '<div class="field"><label for="rs-desc">Description</label>' +
+      '<div class="field"><label for="rs-desc">Description</label>' +
           '<textarea id="rs-desc" rows="2">' + esc(r.description) + '</textarea></div>' +
+        '<div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px;">' +
+          '<p style="font-size:13px;font-weight:800;color:var(--teal);margin-bottom:4px;">Bank Details</p>' +
+          '<p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Customers will see these at checkout to pay you directly.</p>' +
+          '<div class="field"><label for="rs-bank-name">Bank name</label>' +
+            '<input id="rs-bank-name" placeholder="e.g. GTBank" value="' + esc(r.bankName || '') + '"></div>' +
+          '<div class="field"><label for="rs-account-name">Account name</label>' +
+            '<input id="rs-account-name" placeholder="e.g. Paradise Kitchen" value="' + esc(r.accountName || '') + '"></div>' +
+          '<div class="field"><label for="rs-account-number">Account number</label>' +
+            '<input id="rs-account-number" inputmode="numeric" placeholder="0123456789" value="' + esc(r.accountNumber || '') + '"></div>' +
+        '</div>' +
         '<div class="row-between">' +
           '<div><div class="rt">Restaurant active</div><div class="rs">Inactive restaurants never appear as open</div></div>' +
           '<label class="switch"><input id="rs-active" type="checkbox" ' + (r.active !== false ? 'checked' : '') + '><span class="slider"></span></label>' +
@@ -449,7 +459,10 @@ function saveRestaurantSettings() {
     deliveryFee: Math.max(0, toNum(fieldVal('rs-fee'))),
     disposableFee: Math.max(0, toNum(fieldVal('rs-disposable'))),
     deliveryTime: fieldVal('rs-time') || '30–45 min',
-    description: fieldVal('rs-desc'),
+   description: fieldVal('rs-desc'),
+    bankName: fieldVal('rs-bank-name'),
+    accountName: fieldVal('rs-account-name'),
+    accountNumber: fieldVal('rs-account-number'),
     image: imgEl ? imgEl.value.trim() : '',
     active: (document.getElementById('rs-active') || {}).checked !== false
   };
