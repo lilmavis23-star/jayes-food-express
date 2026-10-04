@@ -1,27 +1,14 @@
 'use strict';
-/* =====================================================================
-   Supabase layer for Munch Express.
-   Loaded BEFORE app.js. Exposes:
-     - sb            : the Supabase client
-     - SupaCache     : in-memory mirror of restaurants + products
-     - SupaData      : CRUD helpers
-     - SupaAuth      : auth helpers
-     - SupaImages    : storage upload/remove
-     - SupaRealtime  : realtime subscription
-     - SupaOrders    : order logging + list
-   ===================================================================== */
+/* Munch Express — Supabase data layer. */
 
-/* ---- CREDENTIALS ---- */
 var SUPABASE_URL  = 'https://wdbwjloupkucxpdmounh.supabase.co';
 var SUPABASE_ANON = 'sb_publishable_UbNd45Z3sw3OnjEIvaLXlA_cwblbZJC';
-/* --------------------- */
 
 if (!window.supabase || !window.supabase.createClient) {
-  console.error('[Munch] Supabase JS not loaded. Check the CDN script tag.');
+  console.error('[Munch] Supabase JS not loaded.');
 }
 var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-/* ---- Slug helper ---- */
 function slugify(str) {
   return String(str || 'restaurant')
     .toLowerCase()
@@ -29,14 +16,12 @@ function slugify(str) {
     .replace(/^-+|-+$/g, '') || 'restaurant';
 }
 
-/* ---- In-memory cache ---- */
 var SupaCache = {
   restaurants: [],
   products:    [],
   loaded:      false
 };
 
-/* ---- Row mappers ---- */
 function rFromDB(row) {
   return {
     id: row.id,
@@ -107,7 +92,6 @@ function pToDB(p) {
   return out;
 }
 
-/* ---- Data helpers ---- */
 var SupaData = {
   loadAll: function () {
     return Promise.all([
@@ -122,7 +106,6 @@ var SupaData = {
       SupaCache.loaded = true;
     });
   },
-
   reloadRestaurants: function () {
     return sb.from('restaurants').select('*').order('created_at', { ascending: true })
       .then(function (res) {
@@ -130,7 +113,6 @@ var SupaData = {
         SupaCache.restaurants = (res.data || []).map(rFromDB);
       });
   },
-
   reloadProducts: function () {
     return sb.from('products').select('*').order('created_at', { ascending: true })
       .then(function (res) {
@@ -138,7 +120,6 @@ var SupaData = {
         SupaCache.products = (res.data || []).map(pFromDB);
       });
   },
-
   getRestaurants: function () { return SupaCache.restaurants; },
   getProducts:    function () { return SupaCache.products; },
   getProductsFor: function (id) {
@@ -162,7 +143,6 @@ var SupaData = {
     }
     return null;
   },
-
   createRestaurant: function (data, ownerId) {
     var payload = rToDB(data);
     payload.owner_id = ownerId;
@@ -175,7 +155,6 @@ var SupaData = {
         return mapped;
       });
   },
-
   updateRestaurant: function (id, patch) {
     return sb.from('restaurants').update(rToDB(patch)).eq('id', id).select().single()
       .then(function (res) {
@@ -187,7 +166,6 @@ var SupaData = {
         return mapped;
       });
   },
-
   createProduct: function (data) {
     return sb.from('products').insert(pToDB(data)).select().single()
       .then(function (res) {
@@ -197,7 +175,6 @@ var SupaData = {
         return mapped;
       });
   },
-
   updateProduct: function (id, patch) {
     return sb.from('products').update(pToDB(patch)).eq('id', id).select().single()
       .then(function (res) {
@@ -209,7 +186,6 @@ var SupaData = {
         return mapped;
       });
   },
-
   deleteProduct: function (id) {
     return sb.from('products').delete().eq('id', id).then(function (res) {
       if (res.error) throw res.error;
@@ -218,16 +194,12 @@ var SupaData = {
   }
 };
 
-/* ---- Auth helpers ---- */
 var SupaAuth = {
   signUp: function (email, password, meta) {
     return sb.auth.signUp({
       email: email,
       password: password,
-      options: {
-        data: meta || {},
-        emailRedirectTo: 'https://munchxpress.com.ng'
-      }
+      options: { data: meta || {}, emailRedirectTo: 'https://munchxpress.com.ng' }
     }).then(function (res) {
       if (res.error) throw res.error;
       return res.data;
@@ -248,21 +220,17 @@ var SupaAuth = {
     });
   },
   onAuthChange: function (cb) {
-    sb.auth.onAuthStateChange(function (event, session) {
-      cb(event, session);
-    });
+    sb.auth.onAuthStateChange(function (event, session) { cb(event, session); });
   }
 };
 
-/* ---- Storage helpers ---- */
 var SupaImages = {
   upload: function (blob, pathHint) {
     var ext = (blob.type && blob.type.indexOf('png') !== -1) ? 'png' : 'jpg';
     var path = (pathHint || 'img') + '_' + Date.now() + '_' +
                Math.random().toString(36).slice(2, 7) + '.' + ext;
     return sb.storage.from('jayes-images').upload(path, blob, {
-      cacheControl: '3600',
-      upsert: false,
+      cacheControl: '3600', upsert: false,
       contentType: blob.type || 'image/jpeg'
     }).then(function (res) {
       if (res.error) throw res.error;
@@ -273,8 +241,7 @@ var SupaImages = {
   uploadReceipt: function (blob) {
     var path = 'receipt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7) + '.jpg';
     return sb.storage.from('munch-receipts').upload(path, blob, {
-      cacheControl: '3600',
-      upsert: false,
+      cacheControl: '3600', upsert: false,
       contentType: blob.type || 'image/jpeg'
     }).then(function (res) {
       if (res.error) throw res.error;
@@ -282,6 +249,9 @@ var SupaImages = {
       return pub.data.publicUrl;
     });
   },
+  remove: function (publicUrl) {
+    if (!publicUrl || typeof publicUrl !== 'string') return Promise.resolve();
+    var marker = '/jayes-images/';
     var idx = publicUrl.indexOf(marker);
     if (idx === -1) return Promise.resolve();
     var path = publicUrl.slice(idx + marker.length).split('?')[0];
@@ -289,37 +259,24 @@ var SupaImages = {
   }
 };
 
-/* ---- Realtime ---- */
 var SupaRealtime = {
   channel: null,
   start: function (onChange) {
     if (SupaRealtime.channel) return;
     SupaRealtime.channel = sb.channel('munch-public-changes')
-      .on('postgres_changes',
-          { event: '*', schema: 'public', table: 'restaurants' },
-          function () {
-            console.log('[Munch realtime] restaurants changed');
-            SupaData.reloadRestaurants().then(onChange).catch(console.warn);
-          })
-      .on('postgres_changes',
-          { event: '*', schema: 'public', table: 'products' },
-          function () {
-            console.log('[Munch realtime] products changed');
-            SupaData.reloadProducts().then(onChange).catch(console.warn);
-          })
-      .subscribe(function (status) {
-        console.log('[Munch realtime] status:', status);
-      });
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'restaurants' }, function () {
+        SupaData.reloadRestaurants().then(onChange).catch(console.warn);
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, function () {
+        SupaData.reloadProducts().then(onChange).catch(console.warn);
+      })
+      .subscribe(function (status) { console.log('[Munch realtime]', status); });
   },
   stop: function () {
-    if (SupaRealtime.channel) {
-      sb.removeChannel(SupaRealtime.channel);
-      SupaRealtime.channel = null;
-    }
+    if (SupaRealtime.channel) { sb.removeChannel(SupaRealtime.channel); SupaRealtime.channel = null; }
   }
 };
 
-/* ---- Orders ---- */
 var SupaOrders = {
   create: function (order) {
     return sb.rpc('create_order', {
@@ -343,8 +300,7 @@ var SupaOrders = {
     });
   },
   listForRestaurant: function (restaurantId, limit) {
-    var q = sb.from('orders').select('*')
-      .eq('restaurant_id', restaurantId)
+    var q = sb.from('orders').select('*').eq('restaurant_id', restaurantId)
       .order('created_at', { ascending: false });
     if (limit) q = q.limit(limit);
     return q.then(function (res) {
@@ -352,7 +308,6 @@ var SupaOrders = {
       return res.data || [];
     });
   },
-
   getById: function (id) {
     return sb.from('orders').select('*').eq('id', id).maybeSingle()
       .then(function (res) {
@@ -360,12 +315,11 @@ var SupaOrders = {
         return res.data || null;
       });
   },
-
   updateStatus: function (id, status) {
     var patch = { status: status };
     var now = new Date().toISOString();
-    if (status === 'accepted')  patch.accepted_at = now;
-    if (status === 'ready')     patch.ready_at = now;
+    if (status === 'accepted')  patch.accepted_at  = now;
+    if (status === 'ready')     patch.ready_at     = now;
     if (status === 'delivered') patch.delivered_at = now;
     return sb.from('orders').update(patch).eq('id', id).select().single()
       .then(function (res) {
@@ -373,7 +327,6 @@ var SupaOrders = {
         return res.data;
       });
   },
-
   track: function (code, phone) {
     return sb.rpc('track_order', { p_code: code, p_phone: phone })
       .then(function (res) {
