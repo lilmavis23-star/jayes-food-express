@@ -125,7 +125,7 @@ function renderRestaurantList() {
 
   if (!state.dataLoaded) {
     if (state.dataLoadFailed) {
-      el.innerHTML = '<div class="empty-state"><div class="big">📡</div><p>Could not load restaurants.</p><p class="mt8" style="font-size:.82rem;">Check your connection and refresh.</p></div>';
+      el.innerHTML = '<div class="empty-state"><div class="big">\ud83d\udce1</div><p>Could not load restaurants.</p><p class="mt8" style="font-size:.82rem;">Check your connection and refresh.</p></div>';
     } else {
       var sk = '<div class="skeleton-card"><div class="skel-thumb"></div><div class="skel-body"><div class="skel-line skel-title"></div><div class="skel-line skel-meta"></div><div class="skel-line skel-meta short"></div><div class="skel-line skel-btn"></div></div></div>';
       el.innerHTML = sk + sk + sk;
@@ -140,7 +140,7 @@ function renderRestaurantList() {
   if (controls) controls.style.display = allRestaurants.length ? '' : 'none';
 
   if (!allRestaurants.length) {
-    el.innerHTML = '<div class="empty-state"><div class="big">🏪</div><p>No restaurants yet.</p><p class="mt8" style="font-size:.82rem;">Are you a restaurant owner? Tap <strong>Vendor</strong> below to register and start receiving orders.</p></div>';
+    el.innerHTML = '<div class="empty-state"><div class="big">\ud83c\udfea</div><p>No restaurants yet.</p><p class="mt8" style="font-size:.82rem;">Are you a restaurant owner? Tap <strong>Vendor</strong> below to register and start receiving orders.</p></div>';
     return;
   }
 
@@ -160,7 +160,7 @@ function renderRestaurantList() {
   renderFilterChips(allRestaurants);
 
   if (!list.length) {
-    el.innerHTML = '<div class="empty-state"><div class="big">🔍</div><p>No restaurants match your search.</p><p class="mt8" style="font-size:.82rem;">Try a different category or clear the search.</p></div>';
+    el.innerHTML = '<div class="empty-state"><div class="big">\ud83d\udd0d</div><p>No restaurants match your search.</p><p class="mt8" style="font-size:.82rem;">Try a different category or clear the search.</p></div>';
     return;
   }
 
@@ -169,14 +169,14 @@ function renderRestaurantList() {
     return '<article class="rest-card' + (open ? '' : ' closed') + '">' +
       '<div class="rest-card-top">' + imageHTML(r.image, 'rest-thumb') +
         '<div class="rest-info"><h3>' + esc(r.name) + '</h3>' +
-          '<p class="muted"><span class="star">★</span> ' + toNum(r.rating).toFixed(1) + ' · ' + esc(r.category) + '</p>' +
-          '<p class="muted">🕒 ' + esc(r.deliveryTime || '30–45 min') + ' · Delivery ' + money(r.deliveryFee) + '</p>' +
+          '<p class="muted"><span class="star">\u2605</span> ' + toNum(r.rating).toFixed(1) + ' \u00b7 ' + esc(r.category) + '</p>' +
+          '<p class="muted">\ud83d\udd52 ' + esc(r.deliveryTime || '30\u201345 min') + ' \u00b7 Delivery ' + money(r.deliveryFee) + '</p>' +
           statusPill(open) +
         '</div>' +
       '</div>' +
       (open
         ? '<button class="btn btn-orange btn-block" onclick="openRestaurantPage(\'' + esc(r.id) + '\')">View Menu</button>'
-        : '<button class="btn btn-disabled btn-block" disabled>Closed — unavailable</button>') +
+        : '<button class="btn btn-disabled btn-block" disabled>Closed \u2014 unavailable</button>') +
     '</article>';
   }).join('');
 }
@@ -241,7 +241,7 @@ function renderRestaurantPage() {
       if (!canOrder) {
         control = '<span class="unavail-tag">Unavailable</span>';
       } else if (qty > 0) {
-        control = '<div class="stepper"><button onclick="changeQty(\'' + esc(p.id) + '\',-1)">−</button><span class="qty">' + qty + '</span><button onclick="addToCart(\'' + esc(p.id) + '\')">+</button></div>';
+        control = '<div class="stepper"><button onclick="changeQty(\'' + esc(p.id) + '\',-1)">\u2212</button><span class="qty">' + qty + '</span><button onclick="addToCart(\'' + esc(p.id) + '\')">+</button></div>';
       } else {
         control = '<button class="add-btn" onclick="addToCart(\'' + esc(p.id) + '\')">+</button>';
       }
@@ -253,23 +253,23 @@ function renderRestaurantPage() {
         '<div class="mi-right">' + control + '</div>' +
       '</div>';
     }).join('') + '</div>';
-  }).join('') : '<div class="empty-state"><div class="big">🍽️</div><p>Menu coming soon.</p></div right>';
+  }).join('') : '<div class="empty-state"><div class="big">\ud83c\udf7d\ufe0f</div><p>Menu coming soon.</p></div>';
 
   el.innerHTML =
-    '<div class="rest now-hero">' +
-      '<button.</ class="back-btn" onclick="openHome()">← Restaurants</button>' +
-      '<div class="rest-herodiv>-main">' +') imageHTML(r.image, 'rest-thumb') +
+    '<div class="rest-hero">' +
+      '<button class="back-btn" onclick="openHome()">\u2190 Restaurants</button>' +
+      '<div class="rest-hero-main">' + imageHTML(r.image, 'rest-thumb') +
         '<div><h2>' + esc(r.name) + '</h2>' +
-          '<p class="muted"><span class="star">★</span> ' + toNum(r.rating).toFixed(1) + ' · ' + esc(r.category) + '</p>' +
-          '<p class="muted">🕒 ' + esc(r.deliveryTime || '30–45 min') + ' · Delivery ' + money(r.deliveryFee) + '</p>' +
+          '<p class="muted"><span class="star">\u2605</span> ' + toNum(r.rating).toFixed(1) + ' \u00b7 ' + esc(r.category) + '</p>' +
+          '<p class="muted">\ud83d\udd52 ' + esc(r.deliveryTime || '30\u201345 min') + ' \u00b7 Delivery ' + money(r.deliveryFee) + '</p>' +
           statusPill(open) +
         '</div>' +
       '</div>' +
       (r.description ? '<p class="desc">"' + esc(r.description) + '"</p>' : '') +
-      (open ? '' : '<div class="closed-banner">This restaurant is closed and cannot take orders +
+      (open ? '' : '<div class="closed-banner">This restaurant is closed and cannot take orders right now.</div>') +
     '</div>' +
     menuHTML +
-    '<div style="padding:10px 16px"><button class="btn btn-teal btn-block" onclick="openCart()">View Cart 🛒</button></div>';
+    '<div style="padding:10px 16px"><button class="btn btn-teal btn-block" onclick="openCart()">View Cart \ud83d\uded2</button></div>';
 }
 
 function openCart() {
@@ -288,14 +288,14 @@ function renderCart() {
   if (!el) return;
   var data = cartLines();
   if (!data.cart || !data.lines.length) {
-    el.innerHTML = '<div class="empty-state"><div class="big">🛒</div><p>Your cart is empty.</p><p class="mt8"><button class="btn btn-orange" onclick="closeCart();openRestaurantList()">Browse Restaurants</button></p></div>';
+    el.innerHTML = '<div class="empty-state"><div class="big">\ud83d\uded2</div><p>Your cart is empty.</p><p class="mt8"><button class="btn btn-orange" onclick="closeCart();openRestaurantList()">Browse Restaurants</button></p></div>';
     return;
   }
   var r = data.restaurant;
   var linesHTML = data.lines.map(function (l) {
     return '<div class="cart-line">' +
       '<div class="cl-info"><h4>' + esc(l.product.name) + '</h4><p class="unit">' + money(l.price) + ' each</p></div>' +
-      '<div class="stepper"><button onclick="changeQty(\'' + esc(l.product.id) + '\',-1)">−</button><span class="qty">' + l.qty + '</span><button onclick="changeQty(\'' + esc(l.product.id) + '\',1)">+</button></div>' +
+      '<div class="stepper"><button onclick="changeQty(\'' + esc(l.product.id) + '\',-1)">\u2212</button><span class="qty">' + l.qty + '</span><button onclick="changeQty(\'' + esc(l.product.id) + '\',1)">+</button></div>' +
       '<div class="cl-side"><span class="lt">' + money(l.line) + '</span><button class="remove-btn" onclick="removeFromCart(\'' + esc(l.product.id) + '\')">Remove</button></div>' +
     '</div>';
   }).join('');
@@ -311,7 +311,7 @@ function renderCart() {
     '</div>' +
     '<div class="btn-row">' +
       '<button class="btn btn-outline" onclick="clearCartWithConfirm()">Clear</button>' +
-      '<button class="btn btn-orange" onclick="openCheckout()">Checkout →</button>' +
+      '<button class="btn btn-orange" onclick="openCheckout()">Checkout \u2192</button>' +
     '</div>' +
     '<p class="mt14" style="text-align:center"><button class="btn-ghost" onclick="closeCart()">Continue shopping</button></p>';
 }
@@ -362,7 +362,7 @@ function updateProductControl(productId) {
   if (!canOrder) {
     control = '<span class="unavail-tag">Unavailable</span>';
   } else if (qty > 0) {
-    control = '<div class="stepper"><button onclick="changeQty(\'' + esc(p.id) + '\',-1)">−</button><span class="qty">' + qty + '</span><button onclick="addToCart(\'' + esc(p.id) + '\')">+</button></div>';
+    control = '<div class="stepper"><button onclick="changeQty(\'' + esc(p.id) + '\',-1)">\u2212</button><span class="qty">' + qty + '</span><button onclick="addToCart(\'' + esc(p.id) + '\')">+</button></div>';
   } else {
     control = '<button class="add-btn" onclick="addToCart(\'' + esc(p.id) + '\')">+</button>';
   }
