@@ -55,7 +55,10 @@ function rFromDB(row) {
     address: row.address || '',
     deliveryFee: row.delivery_fee != null ? Number(row.delivery_fee) : 0,
     disposableFee: row.disposable_fee != null ? Number(row.disposable_fee) : 0,
-    deliveryTime: row.delivery_time || '30–45 min'
+    deliveryTime: row.delivery_time || '30–45 min',
+    bankName: row.bank_name || '',
+    accountName: row.account_name || '',
+    accountNumber: row.account_number || ''
   };
 }
 function rToDB(r) {
@@ -75,6 +78,9 @@ function rToDB(r) {
   if (r.deliveryFee   !== undefined) out.delivery_fee   = r.deliveryFee;
   if (r.disposableFee !== undefined) out.disposable_fee = r.disposableFee;
   if (r.deliveryTime  !== undefined) out.delivery_time  = r.deliveryTime;
+  if (r.bankName      !== undefined) out.bank_name      = r.bankName;
+  if (r.accountName   !== undefined) out.account_name   = r.accountName;
+  if (r.accountNumber !== undefined) out.account_number = r.accountNumber;
   return out;
 }
 function pFromDB(row) {
@@ -319,10 +325,11 @@ var SupaOrders = {
       food_total: order.foodTotal,
       delivery_fee: order.deliveryFee,
       grand_total: order.grandTotal,
-      status: 'submitted'
-    }).then(function (res) {
+      receipt_url: order.receiptUrl || '',
+      status: 'awaiting'
+    }).select().single().then(function (res) {
       if (res.error) throw res.error;
-      return true;
+      return res.data;
     });
   },
 
@@ -335,5 +342,34 @@ var SupaOrders = {
       if (res.error) throw res.error;
       return res.data || [];
     });
+  },
+
+  getById: function (id) {
+    return sb.from('orders').select('*').eq('id', id).maybeSingle()
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return res.data || null;
+      });
+  },
+
+  updateStatus: function (id, status) {
+    var patch = { status: status };
+    var now = new Date().toISOString();
+    if (status === 'accepted')  patch.accepted_at = now;
+    if (status === 'ready')     patch.ready_at = now;
+    if (status === 'delivered') patch.delivered_at = now;
+    return sb.from('orders').update(patch).eq('id', id).select().single()
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return res.data;
+      });
+  },
+
+  track: function (code, phone) {
+    return sb.rpc('track_order', { p_code: code, p_phone: phone })
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return res.data && res.data[0] ? res.data[0] : null;
+      });
   }
 };
