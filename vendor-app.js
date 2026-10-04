@@ -76,8 +76,8 @@ function showVendorDashboard() {
     '<div id="recent-orders" style="padding:0 16px 6px;"></div>' +
     '<div class="quick-list">' +
   '<div class="quick-list">' +
-      '<button class="quick-item" onclick="openMenuManager()"><span class="qi-ico">🍽️</span>Manage Menu <span class="qi-arrow">›</span></button>' +
-      '<button class="quick-item" onclick="openRestaurantSettings()"><span class="qi-ico">⚙️</span>Restaurant Settings <span class="qi-arrow">›</span></button>' +
+     '<button class="quick-item" onclick="openVendorOrders()"><span class="qi-ico">📋</span>Orders <span class="qi-arrow">›</span></button>' +
+      '<button class="quick-item" onclick="openMenuManager()"><span class="qi-ico">🍽️</span>Manage Menu <span class="qi-arrow">›</span></button>' +'<button class="quick-item" onclick="openRestaurantSettings()"><span class="qi-ico">⚙️</span>Restaurant Settings <span class="qi-arrow">›</span></button>' +
       '<button class="quick-item" onclick="openOpeningHours()"><span class="qi-ico">🕒</span>Opening Hours <span class="qi-arrow">›</span></button>' +
       '<button class="quick-item" onclick="openWhatsAppSettings()"><span class="qi-ico">💬</span>WhatsApp Settings <span class="qi-arrow">›</span></button>' +
       '<button class="quick-item" onclick="openShareModal()"><span class="qi-ico">🔗</span>Share / QR Code <span class="qi-arrow">›</span></button>' +
