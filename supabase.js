@@ -270,9 +270,18 @@ var SupaImages = {
       return pub.data.publicUrl;
     });
   },
-  remove: function (publicUrl) {
-    if (!publicUrl || typeof publicUrl !== 'string') return Promise.resolve();
-    var marker = '/jayes-images/';
+  uploadReceipt: function (blob) {
+    var path = 'receipt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7) + '.jpg';
+    return sb.storage.from('munch-receipts').upload(path, blob, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: blob.type || 'image/jpeg'
+    }).then(function (res) {
+      if (res.error) throw res.error;
+      var pub = sb.storage.from('munch-receipts').getPublicUrl(path);
+      return pub.data.publicUrl;
+    });
+  },
     var idx = publicUrl.indexOf(marker);
     if (idx === -1) return Promise.resolve();
     var path = publicUrl.slice(idx + marker.length).split('?')[0];
@@ -313,26 +322,26 @@ var SupaRealtime = {
 /* ---- Orders ---- */
 var SupaOrders = {
   create: function (order) {
-    return sb.from('orders').insert({
-      restaurant_id: order.restaurantId,
-      restaurant_name: order.restaurantName,
-      customer_name: order.customerName,
-      customer_phone: order.customerPhone,
-      delivery_location: order.deliveryLocation,
-      order_option: order.orderOption,
-      instructions: order.instructions,
-      items: order.items,
-      food_total: order.foodTotal,
-      delivery_fee: order.deliveryFee,
-      grand_total: order.grandTotal,
-      receipt_url: order.receiptUrl || '',
-      status: 'awaiting'
-    }).select().single().then(function (res) {
+    return sb.rpc('create_order', {
+      p_restaurant_id: order.restaurantId,
+      p_restaurant_name: order.restaurantName,
+      p_customer_name: order.customerName,
+      p_customer_phone: order.customerPhone,
+      p_delivery_location: order.deliveryLocation || '',
+      p_order_option: order.orderOption || 'Delivery',
+      p_instructions: order.instructions || '',
+      p_items: order.items,
+      p_food_total: order.foodTotal,
+      p_delivery_fee: order.deliveryFee,
+      p_grand_total: order.grandTotal,
+      p_receipt_url: order.receiptUrl || ''
+    }).then(function (res) {
       if (res.error) throw res.error;
-      return res.data;
+      var row = res.data && res.data[0];
+      if (!row) throw new Error('Could not create order');
+      return row;
     });
   },
-
   listForRestaurant: function (restaurantId, limit) {
     var q = sb.from('orders').select('*')
       .eq('restaurant_id', restaurantId)
