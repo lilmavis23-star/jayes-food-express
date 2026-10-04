@@ -235,28 +235,6 @@
 <script src="app-vendor-orders.js"></script>
 <script src="app-vendor-order-details.js"></script>
 <script src="app-init.js"></script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').then(function (reg) {
-      console.log('[Munch] Service worker registered', reg.scope);
-    }).catch(function (err) {
-      console.warn('[Munch] Service worker registration failed', err);
-    });
-  });
-}
-</script>
-<script>
-setTimeout(function () {
-  var m = [];
-  if (typeof openVendorOrders === 'undefined') m.push('openVendorOrders function');
-  if (!document.getElementById('screen-vendor-orders')) m.push('screen-vendor-orders section');
-  if (typeof SCREENS !== 'undefined' && SCREENS.indexOf('vendor-orders') === -1) m.push('vendor-orders in SCREENS');
-  var bar = document.createElement('div');
-  bar.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#1F2937;color:#fff;padding:14px;font:14px monospace;z-index:99999;text-align:center;';
-  bar.textContent = m.length ? 'MISSING: ' + m.join(', ') : 'Vendor orders system loaded OK';
-  document.body.appendChild(bar);
-}, 2500);
-</script>
+
 </body>
 </html>
