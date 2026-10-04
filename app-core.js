@@ -247,7 +247,7 @@ function compressImageToBlob(file, maxDim, quality) {
 
 /* ============ Screen manager ============ */
 var SCREENS = ['customer-app', 'restaurant-page', 'vendor-login', 'vendor-register', 'vendor-dashboard',
-  'menu-manager', 'food-form', 'restaurant-settings', 'opening-hours', 'whatsapp-settings'];
+  'menu-manager', 'food-form', 'restaurant-settings', 'opening-hours', 'whatsapp-settings', 'vendor-orders'];
 
 function showScreen(name) {
   SCREENS.forEach(function (s) {
