@@ -245,5 +245,32 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<script>
+window.addEventListener('load', function () {
+  var checks = [
+    ['sb',            typeof window.sb],
+    ['SupaData',      typeof window.SupaData],
+    ['SupaOrders',    typeof window.SupaOrders],
+    ['SupaAuth',      typeof window.SupaAuth],
+    ['showScreen',    typeof window.showScreen],
+    ['getCart',       typeof window.getCart],
+    ['statusPill',    typeof window.statusPill],
+    ['openHome',      typeof window.openHome],
+    ['renderRestaurantList', typeof window.renderRestaurantList],
+    ['openCart',      typeof window.openCart],
+    ['openVendorAccess', typeof window.openVendorAccess],
+    ['showVendorDashboard', typeof window.showVendorDashboard],
+    ['init',          typeof window.init]
+  ];
+  var broken = checks.filter(function (c) { return c[1] === 'undefined'; });
+  var msg = broken.length
+    ? 'MISSING: ' + broken.map(function (c) { return c[0]; }).join(', ')
+    : 'All key functions loaded OK';
+  var div = document.createElement('div');
+  div.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#1F2937;color:#fff;padding:16px;font:13px monospace;z-index:99999;text-align:center;word-break:break-all;';
+  div.textContent = msg;
+  document.body.appendChild(div);
+});
+</script>
 </body>
 </html>
