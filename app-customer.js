@@ -164,21 +164,38 @@ function renderRestaurantList() {
     return;
   }
 
-  el.innerHTML = list.map(function (r) {
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var r = list[i];
     var open = isRestaurantOpen(r);
-    return '<article class="rest-card' + (open ? '' : ' closed') + '">' +
-      '<div class="rest-card-top">' + imageHTML(r.image, 'rest-thumb') +
-        '<div class="rest-info"><h3>' + esc(r.name) + '</h3>' +
-          '<p class="muted"><span class="star">\u2605</span> ' + toNum(r.rating).toFixed(1) + ' \u00b7 ' + esc(r.category) + '</p>' +
-          '<p class="muted">\ud83d\udd52 ' + esc(r.deliveryTime || '30\u201345 min') + ' \u00b7 Delivery ' + money(r.deliveryFee) + '</p>' +
-          statusPill(open) +
-        '</div>' +
-      '</div>' +
-      (open
-        ? '<button class="btn btn-orange btn-block" onclick="openRestaurantPage(\'' + esc(r.id) + '\')">View Menu</button>'
-        : '<button class="btn btn-disabled btn-block" disabled>Closed \u2014 unavailable</button>') +
-    '</article>';
-  }).join('');
+
+    var cover;
+    if (isImageSrc(r.image)) {
+      cover = '<img src="' + esc(r.image) + '" alt="" loading="lazy">';
+    } else {
+      cover = '<span class="rest-card-emoji">' + esc(r.image || '\ud83c\udf7d\ufe0f') + '</span>';
+    }
+
+    var dFee = toNum(r.deliveryFee);
+    var deliveryText = dFee > 0 ? 'Delivery ' + money(dFee) : 'Free delivery';
+    var rating = toNum(r.rating).toFixed(1);
+    var dtime = esc(r.deliveryTime || '30\u201345 min');
+    var cat = esc(r.category || 'Food');
+
+    html += '<article class="rest-card' + (open ? '' : ' closed') + '" onclick="openRestaurantPage(\'' + esc(r.id) + '\')">';
+    html += '<div class="rest-card-cover">' + cover + '</div>';
+    html += '<div class="rest-card-body">';
+    html += '<div class="rest-card-head">';
+    html += '<h3>' + esc(r.name) + '</h3>';
+    html += '<span class="rest-card-rating"><span class="star">\u2605</span> ' + rating + '</span>';
+    html += '</div>';
+    html += '<p class="rest-card-line">' + cat + ' \u00b7 ' + dtime + '</p>';
+    html += '<p class="rest-card-line">' + deliveryText + '</p>';
+    html += '<div class="rest-card-status">' + statusPill(open) + '</div>';
+    html += '</div>';
+    html += '</article>';
+  }
+  el.innerHTML = html;
 }
 
 function renderFilterChips(allRestaurants) {
