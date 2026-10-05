@@ -127,8 +127,18 @@ function renderRestaurantList() {
     if (state.dataLoadFailed) {
       el.innerHTML = '<div class="empty-state"><div class="big">\ud83d\udce1</div><p>Could not load restaurants.</p><p class="mt8" style="font-size:.82rem;">Check your connection and refresh.</p></div>';
     } else {
-      var sk = '<div class="skeleton-card"><div class="skel-thumb"></div><div class="skel-body"><div class="skel-line skel-title"></div><div class="skel-line skel-meta"></div><div class="skel-line skel-meta short"></div><div class="skel-line skel-btn"></div></div></div>';
-      el.innerHTML = sk + sk + sk;
+      var sk = '';
+      for (var s = 0; s < 3; s++) {
+        sk += '<div class="skeleton-card">';
+        sk += '<div class="skel-cover"></div>';
+        sk += '<div class="skel-body">';
+        sk += '<div class="skel-line skel-title"></div>';
+        sk += '<div class="skel-line skel-meta"></div>';
+        sk += '<div class="skel-line skel-meta short"></div>';
+        sk += '</div>';
+        sk += '</div>';
+      }
+      el.innerHTML = sk;
     }
     var ctrl = document.getElementById('restaurant-controls');
     if (ctrl) ctrl.style.display = 'none';
