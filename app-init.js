@@ -51,7 +51,6 @@ async function init() {
 
   try {
     await SupaData.loadAll();
-    await new Promise(function (r) { setTimeout(r, 2500); });
     state.dataLoaded = true;
   } catch (err) {
     console.error('[Munch] Initial load failed:', err);
