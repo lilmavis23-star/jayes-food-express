@@ -44,7 +44,12 @@ function currentScreenIsDashboard() {
 
 /* ============ Init ============ */
 async function init() {
-try {
+  /* Paint skeletons immediately so the page doesn't look empty */
+  updateCartBadge();
+  renderRestaurantList();
+  showScreen('customer-app');
+
+  try {
     await SupaData.loadAll();
     await new Promise(function (r) { setTimeout(r, 2500); });
     state.dataLoaded = true;
