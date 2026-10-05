@@ -503,3 +503,34 @@ footer .f-copy{font-size:.72rem;color:#9CA3AF}
   margin: 2px 0 0;
 }
 .rest-card-status { margin-top: 10px; }
+.skeleton-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.skel-cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(90deg, #EFEDEA 25%, #F7F5F2 50%, #EFEDEA 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+.skeleton-card .skel-body {
+  padding: 14px 16px 16px;
+  display: block;
+}
+.skeleton-card .skel-line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #EFEDEA 25%, #F7F5F2 50%, #EFEDEA 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  margin-bottom: 8px;
+}
+.skeleton-card .skel-title { width: 55%; height: 16px; }
+.skeleton-card .skel-meta { width: 40%; }
+.skeleton-card .skel-meta.short { width: 30%; margin-bottom: 0; }
