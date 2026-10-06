@@ -39,16 +39,15 @@ function renderOrderDetailBody(o) {
   html += '</div>';
 
   /* Receipt */
+  /* Receipt */
   html += '<div class="form-card"><h3>PAYMENT RECEIPT</h3>';
   if (o.receipt_url) {
-    html += '<p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Tap to view full size.</p>';
-    html += '<a href="' + esc(o.receipt_url) + '" target="_blank" rel="noopener">';
-    html += '<img src="' + esc(o.receipt_url) + '" style="width:100%;border-radius:10px;border:1px solid var(--border);" alt="Receipt"></a>';
+    html += '<p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Loading receipt...</p>';
+    html += '<div id="receipt-slot-' + esc(o.id) + '"></div>';
   } else {
     html += '<p style="font-size:13px;color:var(--muted);">No receipt uploaded.</p>';
   }
   html += '</div>';
-
   /* Customer */
   html += '<div class="form-card"><h3>CUSTOMER</h3>';
   html += detailRow('Name', esc(o.customer_name || '-'));
@@ -91,6 +90,20 @@ function renderOrderDetailBody(o) {
   }
 
   body.innerHTML = html;
+
+  /* Load receipt via signed URL (private bucket) */
+  if (o.receipt_url) {
+    SupaImages.getReceiptUrl(o.receipt_url).then(function (url) {
+      var slot = document.getElementById('receipt-slot-' + o.id);
+      if (!slot) return;
+      if (!url) {
+        slot.innerHTML = '<p style="font-size:13px;color:var(--muted);">Could not load receipt.</p>';
+        return;
+      }
+      slot.innerHTML = '<a href="' + url + '" target="_blank" rel="noopener">' +
+        '<img src="' + url + '" style="width:100%;border-radius:10px;border:1px solid var(--border);" alt="Receipt"></a>';
+    });
+  }
 }
 
 function detailRow(label, value) {
