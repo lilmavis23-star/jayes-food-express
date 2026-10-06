@@ -438,8 +438,8 @@ footer .f-copy{font-size:.72rem;color:#9CA3AF}
 }
 .menu-item .rest-thumb,
 .menu-item .emoji-thumb {
-  width: 84px;
-  height: 84px;
+  width: 120px;
+  height: 120px;
   font-size: 38px;
   border-radius: 14px;
 }
