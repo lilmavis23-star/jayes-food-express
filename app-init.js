@@ -58,7 +58,7 @@ function showInfo(topic) {
       '<p>So I built something different. A simple tool that gives any restaurant — from a home kitchen to a busy eatery — a proper online menu and order system, free, with no commission. Orders go straight to the restaurant. Payment goes straight to the restaurant. Delivery is arranged by the restaurant. I just built the software.</p>' +
       '<p>It started in my bedroom, on my phone, at 1am. It is still early. There are bugs. There are things I haven\'t thought of yet. If you run a restaurant and want to try it, please reach out — I will set it up with you personally. If you order and something goes wrong, tell me and I will fix it.</p>' +
       '<p>Thank you for being part of this.</p>' +
-      '<p>\u2014 The Founder, Munch Express</p>'
+      '<p>\u2014 Olamiji Oluwatosin Adebajo, Founder of Munch Express</p>'
   }[topic] || '<p>Coming soon.</p>';
   showModal({
     title: topic,
