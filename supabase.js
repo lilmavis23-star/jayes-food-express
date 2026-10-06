@@ -245,9 +245,27 @@ var SupaImages = {
       contentType: blob.type || 'image/jpeg'
     }).then(function (res) {
       if (res.error) throw res.error;
-      var pub = sb.storage.from('munch-receipts').getPublicUrl(path);
-      return pub.data.publicUrl;
+      return path;
     });
+  },
+
+  getReceiptUrl: function (path) {
+    if (!path) return Promise.resolve(null);
+    /* If it's already a full URL (old data), extract the path */
+    var clean = path;
+    var marker = '/munch-receipts/';
+    var idx = path.indexOf(marker);
+    if (idx !== -1) clean = path.slice(idx + marker.length).split('?')[0];
+
+    return sb.storage.from('munch-receipts').createSignedUrl(clean, 3600)
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return res.data ? res.data.signedUrl : null;
+      })
+      .catch(function (err) {
+        console.warn('[Munch] Signed URL failed:', err);
+        return null;
+      });
   },
   remove: function (publicUrl) {
     if (!publicUrl || typeof publicUrl !== 'string') return Promise.resolve();
