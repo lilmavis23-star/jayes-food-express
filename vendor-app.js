@@ -21,6 +21,7 @@ var FOOD_CATEGORIES = [
   'Chicken',
   'Beef',
   'Turkey',
+  'Fish',
   'Noodles',
   'Soups',
   'Pastries',
