@@ -17,6 +17,7 @@ var STORE_CATEGORIES = [
 
 var FOOD_CATEGORIES = [
   'Rice & Meals',
+  'Swallow',
   'Chicken',
   'Beef',
   'Turkey',
