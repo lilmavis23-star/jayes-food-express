@@ -59,11 +59,30 @@ function renderOrderDetailBody(o) {
 
   /* Map / directions */
   if (o.delivery_lat && o.delivery_lng) {
-    var gmap = 'https://www.google.com/maps/dir/?api=1&destination=' + o.delivery_lat + ',' + o.delivery_lng;
+    var dest = Number(o.delivery_lat) + ',' + Number(o.delivery_lng);
+
+    /* Get the restaurant's own coordinates from cache */
+    var rest = null;
+    try { rest = getRestaurant(o.restaurant_id); } catch (e) {}
+    var hasRest = rest && rest.lat && rest.lng;
+    var src = hasRest ? (Number(rest.lat) + ',' + Number(rest.lng)) : '';
+
+    var gmap = src
+      ? 'https://maps.google.com/maps?saddr=' + src + '&daddr=' + dest + '&directionsmode=driving'
+      : 'https://maps.google.com/maps?daddr=' + dest + '&directionsmode=driving';
+    var amap = src
+      ? 'https://maps.apple.com/?saddr=' + src + '&daddr=' + dest + '&dirflg=d'
+      : 'https://maps.apple.com/?daddr=' + dest + '&dirflg=d';
+
     html += '<div class="form-card"><h3>LOCATION</h3>';
-    html += '<p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Customer pinned this exact spot.</p>';
-    html += '<a href="' + gmap + '" target="_blank" rel="noopener" class="btn btn-teal btn-block" style="text-decoration:none;display:block;text-align:center;">Get Directions in Google Maps</a>';
-    html += '<p style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">Coordinates: ' + Number(o.delivery_lat).toFixed(5) + ', ' + Number(o.delivery_lng).toFixed(5) + '</p>';
+    if (hasRest) {
+      html += '<p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Directions from your restaurant to the customer\u2019s pinned spot.</p>';
+    } else {
+      html += '<p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Customer pinned this spot. Set your restaurant location in Settings so riders get directions from you.</p>';
+    }
+    html += '<a href="' + gmap + '" target="_blank" rel="noopener" class="btn btn-teal btn-block" style="text-decoration:none;display:block;text-align:center;margin-bottom:8px;">Open in Google Maps</a>';
+    html += '<a href="' + amap + '" target="_blank" rel="noopener" class="btn btn-outline btn-block" style="text-decoration:none;display:block;text-align:center;">Open in Apple Maps</a>';
+    html += '<p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;">Pin: ' + Number(o.delivery_lat).toFixed(5) + ', ' + Number(o.delivery_lng).toFixed(5) + '</p>';
     html += '</div>';
   }
 
