@@ -2,6 +2,8 @@
 /* Munch Express — checkout, receipt upload, order confirmation. */
 
 var pendingReceiptBlob = null;
+var pendingDeliveryLat = null;
+var pendingDeliveryLng = null;
 
 function openCheckout() {
   var data = cartLines();
@@ -9,6 +11,8 @@ function openCheckout() {
   closeCart();
   state.checkoutOption = 'Delivery';
   pendingReceiptBlob = null;
+  pendingDeliveryLat = null;
+  pendingDeliveryLng = null;
   renderCheckout();
   document.getElementById('checkout-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -77,7 +81,20 @@ function renderCheckout() {
           '<label class="radio-card' + (isDel ? ' sel' : '') + '"><input type="radio" name="co-opt" ' + (isDel ? 'checked' : '') + ' onchange="setCheckoutOption(\'Delivery\')">Delivery</label>' +
           '<label class="radio-card' + (!isDel ? ' sel' : '') + '"><input type="radio" name="co-opt" ' + (!isDel ? 'checked' : '') + ' onchange="setCheckoutOption(\'Pickup\')">Pickup</label>' +
         '</div></div>' +
-      '<div class="field"><label for="co-loc">Delivery location' + (isDel ? ' *' : '') + '</label><input id="co-loc" placeholder="e.g. Ijebu Ode"></div>' +
+     '<div class="field">' +
+        '<label for="co-loc">Delivery location' + (isDel ? ' *' : '') + '</label>' +
+        '<div class="location-row">' +
+          '<input id="co-loc" placeholder="e.g. Mobalufon, near the big church">' +
+          '<button type="button" class="location-pin-btn" id="co-pin-btn" onclick="pickLocationOnMap()">' +
+            '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+              '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>' +
+              '<circle cx="12" cy="10" r="3"/>' +
+            '</svg>' +
+            'Pin' +
+          '</button>' +
+        '</div>' +
+        '<div id="co-pin-status"></div>' +
+      '</div>' +
       '<div class="field"><label for="co-note">Order note / instructions</label><textarea id="co-note" rows="2" placeholder="Optional"></textarea></div>' +
     '</div>' +
     '<div class="form-card"><h3>STEP 3 — UPLOAD RECEIPT</h3>' +
@@ -177,8 +194,10 @@ function submitCheckout() {
         }),
         foodTotal: data.foodTotal,
         deliveryFee: data.deliveryFee,
-        grandTotal: grand,
-        receiptUrl: receiptUrl
+      grandTotal: grand,
+        receiptUrl: receiptUrl,
+        deliveryLat: pendingDeliveryLat,
+        deliveryLng: pendingDeliveryLng
       });
     })
     .then(function (row) {
@@ -230,5 +249,34 @@ function copyOrderCode(code) {
     });
   } else {
     toast('Copy manually: ' + code);
+  }
+}
+
+/* ============ Map location picker ============ */
+function pickLocationOnMap() {
+  openMapPicker(pendingDeliveryLat, pendingDeliveryLng).then(function (result) {
+    if (!result) return;
+    pendingDeliveryLat = result.lat;
+    pendingDeliveryLng = result.lng;
+    updatePinStatus();
+  });
+}
+
+function updatePinStatus() {
+  var el = document.getElementById('co-pin-status');
+  var btn = document.getElementById('co-pin-btn');
+  if (!el) return;
+  if (pendingDeliveryLat && pendingDeliveryLng) {
+    el.innerHTML =
+      '<div class="location-status">' +
+        '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M4.75 8.25l2 2 4.5-4.5"/>' +
+        '</svg>' +
+        'Exact location pinned' +
+      '</div>';
+    if (btn) btn.classList.add('active');
+  } else {
+    el.innerHTML = '';
+    if (btn) btn.classList.remove('active');
   }
 }
