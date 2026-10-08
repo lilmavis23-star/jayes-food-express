@@ -43,7 +43,9 @@ function rFromDB(row) {
     deliveryTime: row.delivery_time || '30–45 min',
     bankName: row.bank_name || '',
     accountName: row.account_name || '',
-    accountNumber: row.account_number || ''
+    accountNumber: row.account_number || '',
+    lat: row.lat != null ? Number(row.lat) : null,
+    lng: row.lng != null ? Number(row.lng) : null
   };
 }
 function rToDB(r) {
@@ -66,6 +68,8 @@ function rToDB(r) {
   if (r.bankName      !== undefined) out.bank_name      = r.bankName;
   if (r.accountName   !== undefined) out.account_name   = r.accountName;
   if (r.accountNumber !== undefined) out.account_number = r.accountNumber;
+  if (r.lat           !== undefined) out.lat            = r.lat;
+  if (r.lng           !== undefined) out.lng            = r.lng;
   return out;
 }
 function pFromDB(row) {
