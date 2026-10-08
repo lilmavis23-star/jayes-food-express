@@ -53,9 +53,19 @@ function renderOrderDetailBody(o) {
   html += detailRow('Name', esc(o.customer_name || '-'));
   html += detailRow('Phone', esc(o.customer_phone || '-'));
   html += detailRow('Option', esc(o.order_option || 'Delivery'));
-  if (o.delivery_location) html += detailRow('Location', esc(o.delivery_location));
+  if (o.delivery_location) html += detailRow('Address', esc(o.delivery_location));
   if (o.instructions) html += detailRow('Note', esc(o.instructions));
   html += '</div>';
+
+  /* Map / directions */
+  if (o.delivery_lat && o.delivery_lng) {
+    var gmap = 'https://www.google.com/maps/dir/?api=1&destination=' + o.delivery_lat + ',' + o.delivery_lng;
+    html += '<div class="form-card"><h3>LOCATION</h3>';
+    html += '<p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Customer pinned this exact spot.</p>';
+    html += '<a href="' + gmap + '" target="_blank" rel="noopener" class="btn btn-teal btn-block" style="text-decoration:none;display:block;text-align:center;">Get Directions in Google Maps</a>';
+    html += '<p style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">Coordinates: ' + Number(o.delivery_lat).toFixed(5) + ', ' + Number(o.delivery_lng).toFixed(5) + '</p>';
+    html += '</div>';
+  }
 
   /* Items */
   html += '<div class="form-card"><h3>ITEMS</h3>';
