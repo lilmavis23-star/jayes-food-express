@@ -534,3 +534,50 @@ footer .f-copy{font-size:.72rem;color:#9CA3AF}
 .skeleton-card .skel-title { width: 55%; height: 16px; }
 .skeleton-card .skel-meta { width: 40%; }
 .skeleton-card .skel-meta.short { width: 30%; margin-bottom: 0; }
+
+/* ============ Map picker ============ */
+#map-picker-canvas { z-index: 1; }
+.leaflet-container { font-family: inherit; }
+.location-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-bottom: 10px;
+}
+.location-row input { flex: 1; }
+.location-pin-btn {
+  flex: none;
+  padding: 0 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--teal);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.location-pin-btn:active { background: var(--teal-soft); }
+.location-pin-btn.active {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+.location-status {
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.map-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
