@@ -414,8 +414,16 @@ function openRestaurantSettings() {
             '<input id="rs-bank-name" placeholder="e.g. GTBank" value="' + esc(r.bankName || '') + '"></div>' +
           '<div class="field"><label for="rs-account-name">Account name</label>' +
             '<input id="rs-account-name" placeholder="e.g. Paradise Kitchen" value="' + esc(r.accountName || '') + '"></div>' +
-          '<div class="field"><label for="rs-account-number">Account number</label>' +
+        '<div class="field"><label for="rs-account-number">Account number</label>' +
             '<input id="rs-account-number" inputmode="numeric" placeholder="0123456789" value="' + esc(r.accountNumber || '') + '"></div>' +
+        '</div>' +
+        '<div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px;">' +
+          '<p style="font-size:13px;font-weight:800;color:var(--teal);margin-bottom:4px;">Restaurant Location</p>' +
+          '<p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Pin your restaurant on the map so riders get directions from you to the customer.</p>' +
+          '<input type="hidden" id="rs-lat" value="' + (r.lat != null ? r.lat : '') + '">' +
+          '<input type="hidden" id="rs-lng" value="' + (r.lng != null ? r.lng : '') + '">' +
+          '<button type="button" class="btn btn-outline btn-block" onclick="pickRestaurantLocation()">Pin Restaurant Location</button>' +
+          '<div id="rs-pin-status" style="margin-top:8px;"></div>' +
         '</div>' +
         '<div class="row-between">' +
           '<div><div class="rt">Restaurant active</div><div class="rs">Inactive restaurants never appear as open</div></div>' +
@@ -460,9 +468,11 @@ function saveRestaurantSettings() {
     disposableFee: Math.max(0, toNum(fieldVal('rs-disposable'))),
     deliveryTime: fieldVal('rs-time') || '30–45 min',
    description: fieldVal('rs-desc'),
-    bankName: fieldVal('rs-bank-name'),
+   bankName: fieldVal('rs-bank-name'),
     accountName: fieldVal('rs-account-name'),
     accountNumber: fieldVal('rs-account-number'),
+    lat: document.getElementById('rs-lat') && document.getElementById('rs-lat').value ? Number(document.getElementById('rs-lat').value) : null,
+    lng: document.getElementById('rs-lng') && document.getElementById('rs-lng').value ? Number(document.getElementById('rs-lng').value) : null,
     image: imgEl ? imgEl.value.trim() : '',
     active: (document.getElementById('rs-active') || {}).checked !== false
   };
@@ -579,6 +589,36 @@ function saveWhatsAppSettings() {
       showVendorDashboard();
     })
     .catch(function (err) { toast(err.message || 'Could not save.'); });
+}
+
+/* ============ Restaurant location picker ============ */
+function pickRestaurantLocation() {
+  var latEl = document.getElementById('rs-lat');
+  var lngEl = document.getElementById('rs-lng');
+  var cur = null;
+  if (latEl && lngEl && latEl.value && lngEl.value) {
+    cur = { lat: Number(latEl.value), lng: Number(lngEl.value) };
+  }
+  openMapPicker(cur ? cur.lat : null, cur ? cur.lng : null).then(function (result) {
+    if (!result) return;
+    if (latEl) latEl.value = result.lat;
+    if (lngEl) lngEl.value = result.lng;
+    updateRestaurantPinStatus();
+  });
+}
+
+function updateRestaurantPinStatus() {
+  var el = document.getElementById('rs-pin-status');
+  var latEl = document.getElementById('rs-lat');
+  var lngEl = document.getElementById('rs-lng');
+  if (!el) return;
+  if (latEl && lngEl && latEl.value && lngEl.value) {
+    el.innerHTML = '<div class="location-status">' +
+      '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.75 8.25l2 2 4.5-4.5"/></svg>' +
+      'Location pinned</div>';
+  } else {
+    el.innerHTML = '';
+  }
 }
 
 /* ============ Share / QR Code ============ */
