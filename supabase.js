@@ -309,7 +309,9 @@ var SupaOrders = {
       p_food_total: order.foodTotal,
       p_delivery_fee: order.deliveryFee,
       p_grand_total: order.grandTotal,
-      p_receipt_url: order.receiptUrl || ''
+      p_receipt_url: order.receiptUrl || '',
+      p_delivery_lat: order.deliveryLat || null,
+      p_delivery_lng: order.deliveryLng || null
     }).then(function (res) {
       if (res.error) throw res.error;
       var row = res.data && res.data[0];
