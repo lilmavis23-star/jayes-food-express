@@ -129,6 +129,23 @@
     <section id="screen-whatsapp-settings" class="screen"></section>
     <!-- ============ VENDOR ORDERS ============ -->
     <section id="screen-vendor-orders" class="screen"></section>
+    <!-- ============ ADMIN LOGIN ============ -->
+    <section id="screen-admin-login" class="screen">
+      <div class="auth-wrap">
+        <div class="auth-card">
+          <h2>Panel Access</h2>
+          <p class="sub">Restricted area.</p>
+          <form onsubmit="return handleAdminLogin(event)">
+            <div class="field"><label for="al-email">Email</label>
+              <input id="al-email" type="email" autocomplete="email" placeholder="you@example.com"></div>
+            <div class="field"><label for="al-pass">Password</label>
+              <input id="al-pass" type="password" autocomplete="current-password"></div>
+            <button class="btn btn-teal btn-block" type="submit">Enter</button>
+          </form>
+          <p class="auth-switch"><button onclick="openHome()">← Back to site</button></p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
