@@ -242,6 +242,25 @@
 <script src="app-vendor-orders.js"></script>
 <script src="app-vendor-order-details.js"></script>
 <script src="app-init.js"></script>
+<script>
+setTimeout(function () {
+  var m = [];
+  if (typeof SupaAdmin === 'undefined') m.push('SupaAdmin');
+  if (typeof openAdminPanel === 'undefined') m.push('openAdminPanel');
+  if (typeof checkAdminDeepLink === 'undefined') m.push('checkAdminDeepLink');
+  if (typeof handleAdminLogin === 'undefined') m.push('handleAdminLogin');
+  if (typeof SCREENS !== 'undefined' && SCREENS.indexOf('admin') === -1) m.push('admin in SCREENS');
+  if (typeof SCREENS !== 'undefined' && SCREENS.indexOf('admin-login') === -1) m.push('admin-login in SCREENS');
+  if (!document.getElementById('screen-admin')) m.push('screen-admin section');
+  if (!document.getElementById('screen-admin-login')) m.push('screen-admin-login section');
+  if (!document.getElementById('admin-body')) m.push('admin-body (created by JS)');
+
+  var bar = document.createElement('div');
+  bar.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#1F2937;color:#fff;padding:14px;font:13px monospace;z-index:99999;text-align:center;word-break:break-all;';
+  bar.textContent = m.length ? 'MISSING: ' + m.join(', ') : 'Admin system loaded OK';
+  document.body.appendChild(bar);
+}, 2500);
+</script>
 
 </body>
 </html>
