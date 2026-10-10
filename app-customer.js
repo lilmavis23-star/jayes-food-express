@@ -81,7 +81,7 @@ function clearCartWithConfirm() {
 
 function cartLines() {
   var c = getCart();
-  if (!c) return { cart: null, lines: [], foodTotal: 0, restaurant: null, deliveryFee: 0, disposableFee: 0 };
+  if (!c) return { cart: null, lines: [], foodTotal: 0, restaurant: null, deliveryFee: 0, disposableFee: 0, serviceFee: SERVICE_FEE };
   var r = getRestaurant(c.restaurantId);
   var lines = [], foodTotal = 0;
   c.items.forEach(function (it) {
@@ -95,7 +95,15 @@ function cartLines() {
   });
   var fee = r ? toNum(r.deliveryFee) : 0;
   var pack = r ? toNum(r.disposableFee) : 0;
-  return { cart: c, lines: lines, foodTotal: foodTotal, restaurant: r, deliveryFee: fee, disposableFee: pack };
+  return {
+    cart: c,
+    lines: lines,
+    foodTotal: foodTotal,
+    restaurant: r,
+    deliveryFee: fee,
+    disposableFee: pack,
+    serviceFee: SERVICE_FEE
+  };
 }
 
 function openHome() {
@@ -326,14 +334,15 @@ function renderCart() {
       '<div class="cl-side"><span class="lt">' + money(l.line) + '</span><button class="remove-btn" onclick="removeFromCart(\'' + esc(l.product.id) + '\')">Remove</button></div>' +
     '</div>';
   }).join('');
-  var grand = data.foodTotal + data.deliveryFee + data.disposableFee;
+var grand = data.foodTotal + data.deliveryFee + data.disposableFee + (data.serviceFee || 0);
   el.innerHTML =
     '<p class="cart-rest">Ordering from <strong>' + esc(r ? r.name : 'Restaurant') + '</strong></p>' +
     linesHTML +
     '<div class="totals">' +
       '<div class="row"><span>Food Total</span><span>' + money(data.foodTotal) + '</span></div>' +
       '<div class="row"><span>Delivery Fee</span><span>' + money(data.deliveryFee) + '</span></div>' +
-      (data.disposableFee > 0 ? '<div class="row"><span>Disposable Pack</span><span>' + money(data.disposableFee) + '</span></div>' : '') +
+     (data.disposableFee > 0 ? '<div class="row"><span>Disposable Pack</span><span>' + money(data.disposableFee) + '</span></div>' : '') +
+      (data.serviceFee > 0 ? '<div class="row"><span>Service Fee</span><span>' + money(data.serviceFee) + '</span></div>' : '') +
       '<div class="row grand"><span>Grand Total</span><span>' + money(grand) + '</span></div>' +
     '</div>' +
     '<div class="btn-row">' +
