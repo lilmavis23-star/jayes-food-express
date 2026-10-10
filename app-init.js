@@ -150,6 +150,15 @@ try {
       currentVendorRestaurant = null;
     }
   });
+
+  /* Admin deep-link: if ?admin is in URL, route to admin */
+  try {
+    if (typeof checkAdminDeepLink === 'function' && checkAdminDeepLink()) {
+      return;
+    }
+  } catch (e) {
+    console.warn('[Munch] admin check skipped', e);
+  }
 }
 
 if (document.readyState === 'loading') {
