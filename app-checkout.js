@@ -35,7 +35,7 @@ function renderCheckout() {
   if (!data.cart || !data.lines.length) { closeCheckout(); openCart(); return; }
   var r = data.restaurant;
   if (!r) { closeCheckout(); openCart(); return; }
-  var grand = data.foodTotal + data.deliveryFee + data.disposableFee;
+  var grand = data.foodTotal + data.deliveryFee + data.disposableFee + (data.serviceFee || 0);
   var isDel = state.checkoutOption === 'Delivery';
   var hasBank = r.bankName && r.accountNumber;
 
@@ -46,7 +46,8 @@ function renderCheckout() {
       }).join('') +
       '<div class="row-between mt8"><span class="rs">Food Total</span><span class="rt">' + money(data.foodTotal) + '</span></div>' +
       '<div class="row-between"><span class="rs">Delivery</span><span class="rt">' + money(data.deliveryFee) + '</span></div>' +
-      (data.disposableFee > 0 ? '<div class="row-between"><span class="rs">Disposable Pack</span><span class="rt">' + money(data.disposableFee) + '</span></div>' : '') +
+     (data.disposableFee > 0 ? '<div class="row-between"><span class="rs">Disposable Pack</span><span class="rt">' + money(data.disposableFee) + '</span></div>' : '') +
+      (data.serviceFee > 0 ? '<div class="row-between"><span class="rs">Service Fee</span><span class="rt">' + money(data.serviceFee) + '</span></div>' : '') +
       '<div class="row-between"><span class="rt">Total</span><span class="rt" style="color:var(--teal)">' + money(grand) + '</span></div>' +
     '</div>';
 
@@ -177,7 +178,7 @@ function submitCheckout() {
   var btn = document.getElementById('checkout-submit-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Placing order…'; }
 
-  var grand = data.foodTotal + data.deliveryFee + data.disposableFee;
+  var grand = data.foodTotal + data.deliveryFee + data.disposableFee + (data.serviceFee || 0);
 
   SupaImages.uploadReceipt(pendingReceiptBlob)
     .then(function (receiptUrl) {
