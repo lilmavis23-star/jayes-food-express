@@ -359,3 +359,14 @@ var SupaOrders = {
       });
   }
 };
+
+/* ---- Admin helpers ---- */
+var SupaAdmin = {
+  listAllOrders: function () {
+    return sb.from('orders').select('*').order('created_at', { ascending: false })
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return res.data || [];
+      });
+  }
+};
