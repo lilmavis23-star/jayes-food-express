@@ -5,6 +5,7 @@
 ===================================================================== */
 
 var CART_KEY = 'jayes_cart';
+var SERVICE_FEE = 150;
 
 /* ============ Categories ============ */
 var STORE_CATEGORIES = [
